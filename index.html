@@ -11,6 +11,7 @@
     <link rel="preload" href="fonts/exo2-semibold.woff2" as="font" crossorigin="anonymous">
     <link rel="preload" href="fonts/exo2-bold.woff2" as="font" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.min.css">
+    <link rel="stylesheet" href="leaflet/leaflet.css">
 </head>
 
 <body>
@@ -217,8 +218,8 @@
                 </div>
 
                 <!-- При переключении на карту блок .users-list нужно скрыть. Способ сокрытия подойдёт любой -->
-                <div class="users-list" >
-                    <table class="users-list__table tab-item active">
+                <div class="users-list">
+                    <table class="users-list__table tab-item active" style="position: relative">
                         <thead class="users-list__table-head">
                             <tr class="users-list__table-row">
                                 <th class="users-list__table-cell users-list__table-name">Пользователь</th>
@@ -252,8 +253,8 @@
             </div>
 
             <!-- При переключении на карту нужно отобразить данный контейнер -->
-            <div class="container" style="display: none">
-                <div class="map">
+            <div class="container" style="display: block; ">
+                <div class="map" id="map-container">
                     <!--
                         Карту нужно отрисовать в этот контейнер. Иконки для карты -
                         img/pin.svg и img/pin-verified.svg для обычных пользователей
@@ -590,18 +591,18 @@
         <div class="user-card">
             <span class="user-card__user-name">
                 <!-- Обратите внимание, что "звёздочка только" у верифицированных пользователей -->
-                <svg width="20" height="20" aria-hidden="true">
+                <svg width="20" height="20" aria-hidden="true" id="verified-point">
                     <use xlink:href="#icon-star"></use>
                 </svg>
-                <span>Неопознанный енот</span>
+                <span id="name-point">Неопознанный енот</span>
             </span>
             <p class="user-card__cash-item"><span class="user-card__cash-label">Валюта</span><span
-                    class="user-card__cash-data">KEKS</span></p>
+                    class="user-card__cash-data" id="currency-point">KEKS</span></p>
             <p class="user-card__cash-item"><span class="user-card__cash-label">Курс</span><span
-                    class="user-card__cash-data">9 999 999 ₽</span></p>
+                    class="user-card__cash-data" id="exchangerate-point">9 999 999 ₽</span></p>
             <p class="user-card__cash-item"><span class="user-card__cash-label">Лимит</span><span
-                    class="user-card__cash-data">9 900 ₽ – 9 900 000 000 ₽</span></p>
-            <ul class="user-card__badges-list">
+                    class="user-card__cash-data" id="cashlimit-point">9 900 ₽ – 9 900 000 000 ₽</span></p>
+            <ul class="user-card__badges-list" id="payments-point">
                 <li class="user-card__badges-item badge">BitTransfer</li>
                 <li class="user-card__badges-item badge">CryptoEx</li>
                 <li class="user-card__badges-item badge">Первый криптобанк</li>
@@ -613,7 +614,7 @@
 
     <script src="pristine/pristine.min.js"></script>
     <script src="leaflet/leaflet.js"></script>
-    <script src="./js/main.js" type="module"></script>
+    <script src="js/main.js" type="module"></script>
 
 </body>
 
