@@ -1,7 +1,7 @@
 import { renderPoints } from './points-render.js';
 // import { activateAdForm, activateFilterForm, deactivateAllForms } from './form-master.js';
 // import { setUserFormSubmit } from './form-master.js';
-import { tableRender } from './list-render.js';
+import { tableRender } from './contractors-render.js';
 import { getData, ROUTES, ERROR_TEXT } from './network-utils.js';
 import { showAlert, removeAlert } from './utils.js';
 // import { activateFilter } from './filter-master.js';
