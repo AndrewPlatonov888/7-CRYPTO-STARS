@@ -1,5 +1,5 @@
 import { contractors } from './main.js';
-import { deleteRenderedPoints, renderPoints } from './points-render.js';
+import { deleteRenderedPoints, renderPoints } from './map-render.js';
 import { tableRender } from './list-render.js';
 
 const DEBOUNCE_TIMEOUT_DELAY = 500; // 500 миллисекунд

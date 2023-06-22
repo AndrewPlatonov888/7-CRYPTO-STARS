@@ -12,6 +12,7 @@
     <link rel="preload" href="fonts/exo2-bold.woff2" as="font" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.min.css">
     <link rel="stylesheet" href="leaflet/leaflet.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
 </head>
 
 <body>
@@ -208,7 +209,7 @@
                         <div class="tabs no-transition-global tabs--toggle-list-map" data-tabs="parent"
                             data-delay="300">
                             <!-- При переключении с карты на список и обратно нужно выделить активный пункт .is-active -->
-                            <div class="tabs__controls" data-tabs="controls">
+                            <div class="tabs__controls" data-tabs="controls" id="list-map-btn">
                                 <button class="tabs__control btn is-active" type="button"
                                     data-tabs="control" id="list-btn">Cписок</button>
                                 <button class="tabs__control btn" type="button" data-tabs="control" id="map-btn">Карта</button>
@@ -219,7 +220,7 @@
 
                 <!-- При переключении на карту блок .users-list нужно скрыть. Способ сокрытия подойдёт любой -->
                 <div class="users-list">
-                    <table class="users-list__table tab-item active" style="position: relative">
+                    <table class="users-list__table tab-item active">
                         <thead class="users-list__table-head">
                             <tr class="users-list__table-row">
                                 <th class="users-list__table-cell users-list__table-name">Пользователь</th>
@@ -253,7 +254,7 @@
             </div>
 
             <!-- При переключении на карту нужно отобразить данный контейнер -->
-            <div class="container" style="display: block; ">
+            <div class="container" style="display: none">
                 <div class="map" id="map-container">
                     <!--
                         Карту нужно отрисовать в этот контейнер. Иконки для карты -

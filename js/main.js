@@ -1,4 +1,4 @@
-import { renderPoints } from './points-render.js';
+import { renderPoints, hideMapShowList, showMapHideList, hideMap } from './map-render.js';
 // import { activateAdForm, activateFilterForm, deactivateAllForms } from './form-master.js';
 // import { setUserFormSubmit } from './form-master.js';
 import { tableRender } from './list-render.js';
@@ -7,10 +7,13 @@ import { showAlert, removeAlert } from './utils.js';
 import { activateFilter } from './filter-master.js';
 
 
-const mapButton = document.querySelector('.map-btn');
-const listButton = document.querySelector('.list-btn');
-const buyerButton = document.querySelector('.buyer-btn');
-const sellerButton = document.querySelector('.seller-btn');
+const listMapContainer = document.querySelector('#list-map-btn');
+const buyerButton = document.querySelector('#buyer-btn');
+const sellerButton = document.querySelector('#seller-btn');
+const mapButton = document.querySelector('#map-btn');
+const listButton = document.querySelector('#list-btn');
+
+
 
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const COPYRIGHT = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -25,6 +28,20 @@ const startCoordinate = {
   lng: 30.31127,
 };
 
+// Прячем карту на старте
+hideMap();
+
+// Хендлер на кнопки 'Список' и 'Карта'
+listMapContainer.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  if (evt.target === mapButton) {
+    showMapHideList();
+  }
+  if (evt.target === listButton) {
+    hideMapShowList();
+  }
+});
+
 // Инициализируем Леафлет (вызываем у L метод map(), чтобы создать карту), прикручиваем ее к блоку map и задаем начальный зум и начальные координаты
 const map = L.map('map-container')
   // .on('load', console.log('leaflet started')) // в случае успешной загрузки карты, активируем формы на странице
@@ -36,13 +53,13 @@ L.tileLayer(TILE_LAYER, {
 
 // Задаем параметры иконок, используемых для отображения объявлений
 const commonIcon = L.icon({
-  iconUrl: '../leaflet/images/marker-icon.png',
+  iconUrl: '../img/pin.svg',
   iconSize: [30, 40],
 });
 
 // Задаем параметры маркера для проверенных предложений
 const starIcon = L.icon({
-  iconUrl: '../leaflet/images/main-pin.svg',
+  iconUrl: '../img/pin-verified.svg',
   iconSize: [40, 50],
 });
 

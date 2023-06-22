@@ -1,6 +1,32 @@
 import { commonIcon, starIcon, map } from './main.js';
 
 const mapMarkers = [];
+const mapContainer = document.querySelector('.map').parentElement;
+const userList = document.querySelector('.users-list');
+const mapButton = document.querySelector('#map-btn');
+const listButton = document.querySelector('#list-btn');
+
+// Функция: прячет карту
+function hideMap() {
+  mapContainer.style.cssText = 'z-index: -1; position: absolute; top: 0';
+}
+
+// Функция: прячет карту и показывает таблицу
+function hideMapShowList() {
+  mapContainer.style.cssText = 'z-index: -1; position: absolute; top: 0';
+  userList.style.cssText = 'display: block';
+  mapButton.classList.toggle('is-active');
+  listButton.classList.toggle('is-active');
+}
+
+// Функция: показыает карту и прячет таблицу
+function showMapHideList() {
+  mapContainer.style.cssText = '';
+  userList.style.cssText = 'display: none';
+  mapButton.classList.toggle('is-active');
+  listButton.classList.toggle('is-active');
+}
+
 
 // Функция генерации HTML-кода для вывода списка платежных систем
 function createPaymentsList(optionsList) {
@@ -69,5 +95,8 @@ function deleteRenderedPoints() {
 export {
   pointRender,
   renderPoints,
-  deleteRenderedPoints
+  deleteRenderedPoints,
+  hideMapShowList,
+  showMapHideList,
+  hideMap
 };
