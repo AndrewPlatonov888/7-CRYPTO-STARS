@@ -191,9 +191,9 @@
                             data-delay="300">
                             <div class="tabs__controls" data-tabs="controls">
                                 <!-- При переключении с продавцов на покупателей и обратно нужно выделить активный пункт .is-active -->
-                                <button class="tabs__control btn is-active" type="button"
+                                <button class="tabs__control btn is-active" type="button" id="buyer-btn"
                                     data-tabs="control">Купить</button>
-                                <button class="tabs__control btn" type="button" data-tabs="control">Продать</button>
+                                <button class="tabs__control btn" type="button" id="seller-btn" data-tabs="control">Продать</button>
                             </div>
                         </div>
                     </div>
@@ -210,8 +210,8 @@
                             <!-- При переключении с карты на список и обратно нужно выделить активный пункт .is-active -->
                             <div class="tabs__controls" data-tabs="controls">
                                 <button class="tabs__control btn is-active" type="button"
-                                    data-tabs="control">Cписок</button>
-                                <button class="tabs__control btn" type="button" data-tabs="control">Карта</button>
+                                    data-tabs="control" id="list-btn">Cписок</button>
+                                <button class="tabs__control btn" type="button" data-tabs="control" id="map-btn">Карта</button>
                             </div>
                         </div>
                     </div>

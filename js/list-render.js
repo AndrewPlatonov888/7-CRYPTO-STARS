@@ -29,6 +29,7 @@ function rowRender(contractor) {
 ////Функция отрисовки таблицы
 function tableRender(contractorsList) {
   const contractorsTable = document.querySelector('.users-list__table-body');
+  contractorsTable.innerHTML = '';
   for (let i = 0; i < contractorsList.length; i++) {
     contractorsTable.appendChild(rowRender(contractorsList[i]));
   }

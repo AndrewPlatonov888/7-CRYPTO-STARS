@@ -1,29 +1,29 @@
 import { renderPoints } from './points-render.js';
 // import { activateAdForm, activateFilterForm, deactivateAllForms } from './form-master.js';
 // import { setUserFormSubmit } from './form-master.js';
-import { tableRender } from './contractors-render.js';
+import { tableRender } from './list-render.js';
 import { getData, ROUTES, ERROR_TEXT } from './network-utils.js';
 import { showAlert, removeAlert } from './utils.js';
-// import { activateFilter } from './filter-master.js';
+import { activateFilter } from './filter-master.js';
+
+
+const mapButton = document.querySelector('.map-btn');
+const listButton = document.querySelector('.list-btn');
+const buyerButton = document.querySelector('.buyer-btn');
+const sellerButton = document.querySelector('.seller-btn');
 
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const COPYRIGHT = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 const ZOOM = 9;
-// const QTY_OF_ADS = 10;
 const ALERT_SHOW_TIME = 5000; // в милли секундах
 let contractors = [];
 let user = [];
-// const newPointInput = document.querySelector('#address');
-
-// // Сначала дисейблим все формы на странице
-// deactivateAllForms();
 
 // Начальные координаты карты
 const startCoordinate = {
   lat: 59.92749,
   lng: 30.31127,
 };
-
 
 // Инициализируем Леафлет (вызываем у L метод map(), чтобы создать карту), прикручиваем ее к блоку map и задаем начальный зум и начальные координаты
 const map = L.map('map-container')
@@ -55,8 +55,10 @@ getData(ROUTES.GET_CONTRACTORS_DATA, ERROR_TEXT.CONTRACTORS_DATA_ERROR)
     // activateFilter();
     console.log(contractors);
     console.log(contractors[0]);
+    activateFilter();
     tableRender(contractors);
     renderPoints(contractors);
+
   })
   .catch(
     (err) => {
@@ -99,7 +101,8 @@ export {
   //   offers,
   commonIcon,
   starIcon,
-  map
+  map,
+  contractors
   //   QTY_OF_ADS,
   //   ALERT_SHOW_TIME
 };
