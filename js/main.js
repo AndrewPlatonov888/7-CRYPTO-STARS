@@ -9,6 +9,7 @@ import { activateFilter } from './filter-master.js';
 
 const btnListMapContainer = document.querySelector('#list-map-btn');
 const btnBuySellContainer = document.querySelector('#buy-sell-btn');
+const btnExchangeContainer = document.querySelector('.users-list__table-body');
 const buyButton = document.querySelector('#buy-btn');
 const sellButton = document.querySelector('#sell-btn');
 const mapButton = document.querySelector('#map-btn');
@@ -31,6 +32,17 @@ const startCoordinate = {
 // Прячем карту на старте
 hideMap();
 
+//Хендлер на кнопки 'Обменять'
+btnExchangeContainer.addEventListener('click', (evt) =>{
+  evt.preventDefault();
+  if (evt.target === mapButton) {
+    showMapHideList();
+  }
+  if (evt.target === listButton) {
+    hideMapShowList();
+  }
+});
+
 // Хендлер на кнопки 'Список' и 'Карта'
 btnListMapContainer.addEventListener('click', (evt) => {
   evt.preventDefault();
@@ -42,14 +54,11 @@ btnListMapContainer.addEventListener('click', (evt) => {
   }
 });
 
-
 // Функция: показыает карту и прячет таблицу
 function activateBuyOrSellBtn() {
   buyButton.classList.toggle('is-active');
   sellButton.classList.toggle('is-active');
 }
-
-// activateBuyBtn();
 
 // Хендлер на кнопки 'Купить' и 'Продать'
 btnBuySellContainer.addEventListener('click', (evt) => {
@@ -57,7 +66,6 @@ btnBuySellContainer.addEventListener('click', (evt) => {
   if (evt.target === buyButton || evt.target === sellButton ) {
     activateBuyOrSellBtn();
     tableRender(contractors);
-    console.log('click');
   }
 });
 
