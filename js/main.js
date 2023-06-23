@@ -7,12 +7,12 @@ import { showAlert, removeAlert } from './utils.js';
 import { activateFilter } from './filter-master.js';
 
 
-const listMapContainer = document.querySelector('#list-map-btn');
-const buyerButton = document.querySelector('#buyer-btn');
-const sellerButton = document.querySelector('#seller-btn');
+const btnListMapContainer = document.querySelector('#list-map-btn');
+const btnBuySellContainer = document.querySelector('#buy-sell-btn');
+const buyButton = document.querySelector('#buy-btn');
+const sellButton = document.querySelector('#sell-btn');
 const mapButton = document.querySelector('#map-btn');
 const listButton = document.querySelector('#list-btn');
-
 
 
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -32,13 +32,32 @@ const startCoordinate = {
 hideMap();
 
 // Хендлер на кнопки 'Список' и 'Карта'
-listMapContainer.addEventListener('click', (evt) => {
+btnListMapContainer.addEventListener('click', (evt) => {
   evt.preventDefault();
   if (evt.target === mapButton) {
     showMapHideList();
   }
   if (evt.target === listButton) {
     hideMapShowList();
+  }
+});
+
+
+// Функция: показыает карту и прячет таблицу
+function activateBuyOrSellBtn() {
+  buyButton.classList.toggle('is-active');
+  sellButton.classList.toggle('is-active');
+}
+
+// activateBuyBtn();
+
+// Хендлер на кнопки 'Купить' и 'Продать'
+btnBuySellContainer.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  if (evt.target === buyButton || evt.target === sellButton ) {
+    activateBuyOrSellBtn();
+    tableRender(contractors);
+    console.log('click');
   }
 });
 
@@ -76,17 +95,17 @@ getData(ROUTES.GET_CONTRACTORS_DATA, ERROR_TEXT.CONTRACTORS_DATA_ERROR)
     tableRender(contractors);
     renderPoints(contractors);
 
-  })
-  .catch(
-    (err) => {
-      showAlert(err);
-      // blockSubmitButton();
-      setTimeout(() => {
-        // unblockSubmitButton();
-        removeAlert();
-      }, ALERT_SHOW_TIME);
-    }
-  );
+  });
+  // .catch(
+  //   (err) => {
+  //     showAlert(err);
+  //     // blockSubmitButton();
+  //     setTimeout(() => {
+  //       // unblockSubmitButton();
+  //       removeAlert();
+  //     }, ALERT_SHOW_TIME);
+  //   }
+  // );
 
 
 // Получаем с сервера данные пользователя
@@ -97,17 +116,17 @@ getData(ROUTES.GET_USER_DATA, ERROR_TEXT.USER_DATA_ERROR)
     // activateFilter();
     // renderPoints(offers);
     console.log(user);
-  })
-  .catch(
-    (err) => {
-      showAlert(err);
-      // blockSubmitButton();
-      setTimeout(() => {
-        // unblockSubmitButton();
-        removeAlert();
-      }, ALERT_SHOW_TIME);
-    }
-  );
+  });
+  // .catch(
+  //   (err) => {
+  //     showAlert(err);
+  //     // blockSubmitButton();
+  //     setTimeout(() => {
+  //       // unblockSubmitButton();
+  //       removeAlert();
+  //     }, ALERT_SHOW_TIME);
+  //   }
+  // );
 
 // setUserFormSubmit();
 

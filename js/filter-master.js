@@ -5,10 +5,6 @@ import { tableRender } from './list-render.js';
 const DEBOUNCE_TIMEOUT_DELAY = 500; // 500 миллисекунд
 const filterContainer = document.querySelector('.custom-toggle');
 
-//Функция сброса фильтров в исходное состояние
-function resetFilters() {
-  filterContainer.reset();
-}
 
 //Функция поучения всех чекнутых чекбоксов (возвращает массив)
 function getCheckedCheckBoxes() {
@@ -22,7 +18,7 @@ function getCheckedCheckBoxes() {
   return checkedCheckboxes;
 }
 
-// Функция установки хендлера на все элементы фильтра и сама функция фильтрации
+// Функция установки хендлера на чекбокс/чекбоксы и сама функция фильтрации
 function setFilteringMenusChange(callback) {
   filterContainer.addEventListener('change', () => {
     deleteRenderedPoints();
@@ -64,7 +60,6 @@ export {
   activateFilter,
   setFilteringMenusChange,
   debounce,
-  resetFilters,
   getCheckedCheckBoxes,
   // getActiveButtons
 };

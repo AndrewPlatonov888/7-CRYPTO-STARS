@@ -1,3 +1,6 @@
+import { getCheckedCheckBoxes } from './filter-master.js';
+const sellButton = document.querySelector('#sell-btn');
+
 // Функция генерации HTML-кода для вывода списка платежных систем
 function createPaymentsList(optionsList) {
   let list = '';
@@ -26,12 +29,33 @@ function rowRender(contractor) {
   return adElement;
 }
 
+///Функция проверки активирована ли кнопка "Продать"
+function isSaleBtnActive() {
+  return sellButton.classList.contains('is-active');
+}
+
+
 ////Функция отрисовки таблицы
 function tableRender(contractorsList) {
+  let newcontractorsList = contractorsList;
+  if (isSaleBtnActive()){
+    newcontractorsList = newcontractorsList.filter((res) => res.status === 'buyer'); // отсеиваем всеx не продавцов
+  } else {
+    newcontractorsList = newcontractorsList.filter((res) => res.status === 'seller'); // отсеиваем всеx не покупателей
+  }
+  const checkboxesValues = getCheckedCheckBoxes();
+  if (checkboxesValues.length > 0) {
+    newcontractorsList = newcontractorsList.filter((res) => res.isVerified !== undefined); // отсеиваем всеx без ключа isVerified
+    for (let i = 0; i <= checkboxesValues.length - 1; i++) {
+      if (checkboxesValues[i] === 'on') {
+        newcontractorsList = newcontractorsList.filter((res) => res.isVerified);
+      }
+    }
+  }
   const contractorsTable = document.querySelector('.users-list__table-body');
   contractorsTable.innerHTML = '';
-  for (let i = 0; i < contractorsList.length; i++) {
-    contractorsTable.appendChild(rowRender(contractorsList[i]));
+  for (let i = 0; i < newcontractorsList.length; i++) {
+    contractorsTable.appendChild(rowRender(newcontractorsList[i]));
   }
 }
 
