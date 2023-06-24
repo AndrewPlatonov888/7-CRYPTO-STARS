@@ -6,9 +6,15 @@ const userList = document.querySelector('.users-list');
 const mapButton = document.querySelector('#map-btn');
 const listButton = document.querySelector('#list-btn');
 
+
 // Функция: прячет карту
 function hideMap() {
   mapContainer.style.cssText = 'z-index: -1; position: absolute; top: 0';
+}
+
+// Функция: показывает карту
+function showMap() {
+  mapContainer.style.cssText = '';
 }
 
 // Функция: прячет карту и показывает таблицу
@@ -21,7 +27,7 @@ function hideMapShowList() {
 
 // Функция: показыает карту и прячет таблицу
 function showMapHideList() {
-  mapContainer.style.cssText = '';
+  mapContainer.style.cssText = 'display: block; opacity: 1';
   userList.style.cssText = 'display: none';
   mapButton.classList.toggle('is-active');
   listButton.classList.toggle('is-active');
@@ -53,6 +59,7 @@ function pointRender(pointInfo) {
   } else {
     pointElement.querySelector('#payments-point').innerHTML = '';
   }
+  pointElement.querySelector('.user-card__change-btn').setAttribute('id', `${pointInfo.id}`);
   return pointElement;
 }
 
@@ -91,6 +98,11 @@ function deleteRenderedPoints() {
   });
 }
 
+///Функция проверки активирована ли кнопка "Продать"
+function isMapBtnActive() {
+  return mapButton.classList.contains('is-active');
+}
+
 
 export {
   pointRender,
@@ -98,5 +110,8 @@ export {
   deleteRenderedPoints,
   hideMapShowList,
   showMapHideList,
-  hideMap
+  hideMap,
+  isMapBtnActive,
+  showMap,
+  mapContainer
 };

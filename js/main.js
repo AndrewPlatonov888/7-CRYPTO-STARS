@@ -1,15 +1,17 @@
 import { renderPoints, hideMapShowList, showMapHideList, hideMap } from './map-render.js';
 // import { activateAdForm, activateFilterForm, deactivateAllForms } from './form-master.js';
-// import { setUserFormSubmit } from './form-master.js';
-import { tableRender } from './list-render.js';
+import { renderModalBuy, renderModalSell } from './modal-render.js';
+import { tableRender, isSaleBtnActive } from './list-render.js';
 import { getData, ROUTES, ERROR_TEXT } from './network-utils.js';
 import { showAlert, removeAlert } from './utils.js';
 import { activateFilter } from './filter-master.js';
 
 
 const btnListMapContainer = document.querySelector('#list-map-btn');
+const exchangeButton = document.querySelectorAll('.btn--greenborder');
 const btnBuySellContainer = document.querySelector('#buy-sell-btn');
 const btnExchangeContainer = document.querySelector('.users-list__table-body');
+const btnMapExchangeContainer = document.querySelector('.map');
 const buyButton = document.querySelector('#buy-btn');
 const sellButton = document.querySelector('#sell-btn');
 const mapButton = document.querySelector('#map-btn');
@@ -32,20 +34,9 @@ const startCoordinate = {
 // Прячем карту на старте
 hideMap();
 
-//Хендлер на кнопки 'Обменять'
-btnExchangeContainer.addEventListener('click', (evt) =>{
-  evt.preventDefault();
-  if (evt.target === mapButton) {
-    showMapHideList();
-  }
-  if (evt.target === listButton) {
-    hideMapShowList();
-  }
-});
 
 // Хендлер на кнопки 'Список' и 'Карта'
 btnListMapContainer.addEventListener('click', (evt) => {
-  evt.preventDefault();
   if (evt.target === mapButton) {
     showMapHideList();
   }
@@ -60,14 +51,6 @@ function activateBuyOrSellBtn() {
   sellButton.classList.toggle('is-active');
 }
 
-// Хендлер на кнопки 'Купить' и 'Продать'
-btnBuySellContainer.addEventListener('click', (evt) => {
-  evt.preventDefault();
-  if (evt.target === buyButton || evt.target === sellButton ) {
-    activateBuyOrSellBtn();
-    tableRender(contractors);
-  }
-});
 
 // Инициализируем Леафлет (вызываем у L метод map(), чтобы создать карту), прикручиваем ее к блоку map и задаем начальный зум и начальные координаты
 const map = L.map('map-container')
@@ -77,6 +60,11 @@ const map = L.map('map-container')
 L.tileLayer(TILE_LAYER, {
   attribution: COPYRIGHT
 }).addTo(map);
+
+// // Функция закрытия всех попапов на карте
+// function closeMapPopups(){
+//   map.closePopup();
+// }
 
 // Задаем параметры иконок, используемых для отображения объявлений
 const commonIcon = L.icon({
@@ -102,18 +90,47 @@ getData(ROUTES.GET_CONTRACTORS_DATA, ERROR_TEXT.CONTRACTORS_DATA_ERROR)
     activateFilter();
     tableRender(contractors);
     renderPoints(contractors);
-
   });
-  // .catch(
-  //   (err) => {
-  //     showAlert(err);
-  //     // blockSubmitButton();
-  //     setTimeout(() => {
-  //       // unblockSubmitButton();
-  //       removeAlert();
-  //     }, ALERT_SHOW_TIME);
-  //   }
-  // );
+// .catch(
+//   (err) => {
+//     showAlert(err);
+//     // blockSubmitButton();
+//     setTimeout(() => {
+//       // unblockSubmitButton();
+//       removeAlert();
+//     }, ALERT_SHOW_TIME);
+//   }
+// );
+
+
+//Хендлер на кнопки 'Обменять' в списке
+btnExchangeContainer.addEventListener('click', (evt) => {
+  if (evt.target.tagName === 'BUTTON') {
+    if (isSaleBtnActive()) {
+      renderModalSell(contractors, evt.target.id);
+    } else {
+      renderModalBuy(contractors, evt.target.id);
+    }
+  }
+});
+
+//Хендлер на кнопки 'Обменять' на карте
+btnMapExchangeContainer.addEventListener('click', (evt) => {
+  if (evt.target.tagName === 'BUTTON') {
+    renderModalBuy(contractors, evt.target.id);
+    map.closePopup();
+  }
+});
+
+// Хендлер на кнопки 'Купить' и 'Продать'
+btnBuySellContainer.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  if (evt.target === buyButton || evt.target === sellButton) {
+    activateBuyOrSellBtn();
+    map.closePopup();
+    tableRender(contractors);
+  }
+});
 
 
 // Получаем с сервера данные пользователя
@@ -125,29 +142,23 @@ getData(ROUTES.GET_USER_DATA, ERROR_TEXT.USER_DATA_ERROR)
     // renderPoints(offers);
     console.log(user);
   });
-  // .catch(
-  //   (err) => {
-  //     showAlert(err);
-  //     // blockSubmitButton();
-  //     setTimeout(() => {
-  //       // unblockSubmitButton();
-  //       removeAlert();
-  //     }, ALERT_SHOW_TIME);
-  //   }
-  // );
+// .catch(
+//   (err) => {
+//     showAlert(err);
+//     // blockSubmitButton();
+//     setTimeout(() => {
+//       // unblockSubmitButton();
+//       removeAlert();
+//     }, ALERT_SHOW_TIME);
+//   }
+// );
 
 // setUserFormSubmit();
 
 export {
-  //   resetUserMarker,
-  //   cityCenter,
-  //   newPointInput,
-  //   offers,
   commonIcon,
   starIcon,
   map,
   contractors
-  //   QTY_OF_ADS,
-  //   ALERT_SHOW_TIME
 };
 

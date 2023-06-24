@@ -26,6 +26,7 @@ function rowRender(contractor) {
   } else {
     adElement.querySelector('#payments').innerHTML = '';
   }
+  adElement.querySelector('.btn--greenborder').setAttribute('id', `${contractor.id}`);
   return adElement;
 }
 
@@ -61,5 +62,6 @@ function tableRender(contractorsList) {
 
 export {
   rowRender,
-  tableRender
+  tableRender,
+  isSaleBtnActive
 };
