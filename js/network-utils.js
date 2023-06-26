@@ -53,31 +53,33 @@ const ERROR_TEXT = {
 // };
 
 
-// //Функция отправки данных на сервер
-// const sendData = (body) => fetch(
-//   `${BASE_URL}${Route.SEND_DATA}`,
-//   {
-//     method: 'POST',
-//     body,
-//   })
-//   .then((response) => {
-//     if (!response.ok) {
-//       showMistake();
-//       document.addEventListener('keydown', onMistakeMessageEvent);
-//       document.addEventListener('mouseup', onMistakeMessageEvent);
-//       throw new Error();
-//     } else {
-//       showConfirmation();
-//       document.addEventListener('keydown', onConfirmationMessageEvent);
-//       document.addEventListener('mouseup', onConfirmationMessageEvent);
-//     }
-//   })
-//   .catch(() => {
-//     showMistake();
-//     document.addEventListener('keydown', onMistakeMessageEvent);
-//     document.addEventListener('mouseup', onMistakeMessageEvent);
-//     throw new Error(ErrorText.SEND_DATA);
-//   });
+//Функция отправки данных на сервер
+const sendData = (body) => fetch(
+  `${BASE_URL}${ROUTES.SEND_DATA}`,
+  {
+    method: 'POST',
+    body,
+  })
+  .then((response) => {
+    if (!response.ok) {
+      console.log('проблема с отправкой');
+      // showMistake();
+      // document.addEventListener('keydown', onMistakeMessageEvent);
+      // document.addEventListener('mouseup', onMistakeMessageEvent);
+      throw new Error();
+    } else {
+      console.log('успешно отправили');
+      // showConfirmation();
+      // document.addEventListener('keydown', onConfirmationMessageEvent);
+      // document.addEventListener('mouseup', onConfirmationMessageEvent);
+    }
+  });
+  // .catch(() => {
+  //   showMistake();
+  //   document.addEventListener('keydown', onMistakeMessageEvent);
+  //   document.addEventListener('mouseup', onMistakeMessageEvent);
+  //   throw new Error(ErrorText.SEND_DATA);
+  // });
 
 // //Функция получения данных от сервера
 // function getData(GET_DATA){ fetch(
@@ -122,7 +124,7 @@ const getData = (ROUTE, ERR_MESSAGE) => fetch(
 
 
 export {
-  // sendData,
+  sendData,
   ROUTES,
   ERROR_TEXT,
   getData

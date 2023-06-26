@@ -1,4 +1,5 @@
 const alertContainer = document.createElement('div');
+const submitButton = document.querySelector('#buy-submit-btn');
 
 //Функция показа сообщения об ошибке
 const showAlert = (message) => {
@@ -25,6 +26,16 @@ const removeAlert = () => {
 //Функция проверки нажатия на ESC
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
+//Функция блокировки кнопки submit после отправки
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+};
+
+//Функция разблокировки кнопки submit после отправки
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+};
+
 export {
   // shuffleRange,
   // getRandomInteger,
@@ -32,8 +43,8 @@ export {
   // getSet,
   showAlert,
   removeAlert,
-  // blockSubmitButton,
-  // unblockSubmitButton,
+  blockSubmitButton,
+  unblockSubmitButton,
   // roundHundred,
   isEscapeKey
 };

@@ -293,36 +293,37 @@
 
         Обратите внимание, что при открытии попапа также нужно убрать скролл с body,
         для этого можете использовать класс "scroll-lock"
-    -->
+    ============================================================================================================================
+     ==============================================================================================================================-->
     <div class="modal modal--buy" style="display: none;">
         <div class="modal__wrapper">
             <div class="modal__overlay" id="buy-overlay" data-close-modal></div>
             <div class="modal__content" id="buy-content">
                 <h2 class="modal__description">Покупка криптовалюты</h2>
                 <!-- Не забудьте указать верный action-атрибут -->
-                <form class="modal-buy" method="post" action="https://cryptostar.grading.pages.academy/" enctype="multipart/form-data" >
+                <form class="modal-buy" method="post"  enctype="multipart/form-data" action="https://cryptostar.grading.pages.academy/" >
                     <!--
                         Обратите внимание, что всем полям для отправки на сервер нужно указать
                         атрибуты name (их список вы найдёте в техзадании), а часть полей
                         вообще отправляется скрытыми
                     -->
                     <input type="hidden" name="type" value="BUY">
-                    <input type="hidden" name="contractorId">
-                    <input type="hidden" name="exchangeRate">
-                    <input type="hidden" name="sendingCurrency">
-                    <input type="hidden" name="receivingCurrency">
+                    <input type="hidden" name="contractorId" id="contractorId">
+                    <input type="hidden" name="exchangeRate" id="exchangeRate">
+                    <input type="hidden" name="sendingCurrency" id="sendingCurrency">
+                    <input type="hidden" name="receivingCurrency" id="receivingCurrency">
 
                     <div class="transaction-info">
                         <p class="transaction-info__item transaction-info__item--name"><span
                                 class="transaction-info__label">Пользователь</span><span class="transaction-info__data">
                                 <svg width="20" height="20" aria-hidden="true">
                                     <use xlink:href="#icon-star"></use>
-                                </svg>John Smith</span></p>
+                                </svg><span id="user-name">John Smith</span></p>
                         <p class="transaction-info__item transaction-info__item--exchangerate"><span
-                                class="transaction-info__label">Курс</span><span class="transaction-info__data">9 999
+                                class="transaction-info__label">Курс</span><span class="transaction-info__data" id="rate">9 999
                                 999&nbsp;₽</span></p>
                         <p class="transaction-info__item transaction-info__item--cashlimit"><span
-                                class="transaction-info__label">Лимит</span><span class="transaction-info__data">9 999
+                                class="transaction-info__label">Лимит</span><span class="transaction-info__data" id="limits">9 999
                                 999&nbsp;₽&nbsp;-&nbsp;9 999 999 000&nbsp;₽</span></p>
                     </div>
                     <div class="modal__container modal__container--small">
@@ -330,9 +331,9 @@
                             <div class="custom-input">
                                 <label><span class="custom-input__label">Оплата</span><span
                                         class="custom-input__unit">₽</span>
-                                    <button class="btn btn--textblue custom-input__btn" type="button">обменять все
+                                    <button class="btn btn--textblue custom-input__btn" type="button" id="exchange-all">обменять все
                                     </button>
-                                    <input type="number" value="" placeholder="0">
+                                    <input type="number" value="" placeholder="0" id="sendingAmount" name="sendingAmount">
                                 </label>
                                 <!-- Пример стилизации ошибки валидации -->
                                 <div class="custom-input__error">Минимальная сумма — 9 999 999 ₽</div>
@@ -345,7 +346,7 @@
                             <div class="custom-input">
                                 <label><span class="custom-input__label">Зачисление</span><span
                                         class="custom-input__unit">KEKS</span>
-                                    <input type="number" placeholder="0">
+                                    <input type="number" placeholder="0" id="receivingAmount" name="receivingAmount">
                                 </label>
                             </div>
                         </div>
@@ -358,7 +359,7 @@
                                     которые есть у пользователя. Способ - удалить из разметки или добавить disable-атрибут
                                     остаётся на ваше усмотрение. Первый пункт, с предложением выбора, должен быть всегда
                                 -->
-                                <select>
+                                <select name="paymentMethod" id="paymentMethod">
                                     <option selected disabled>Выберите платёжную систему</option>
                                     <option>CryptoEx</option>
                                     <option>Первый криптобанк</option>
@@ -371,25 +372,25 @@
                             <div class="custom-input">
                                 <!-- В случае, если выбрана оплата наличными, поле нужно оставить пустым -->
                                 <label><span class="custom-input__label">Номер банковской карты пользователя</span>
-                                    <input type="number" placeholder="1234 5678 9012 3456" disabled>
+                                    <input type="number" placeholder="1234 5678 9012 3456" id="bankCardNumber" disabled>
                                 </label>
                             </div>
                         </div>
                         <div class="modal__input-wrapper modal__input-wrapper--decorated">
                             <div class="custom-input">
                                 <label><span class="custom-input__label">Номер криптокошелька пользователя</span>
-                                    <input type="number" placeholder="08701943851-9832345" disabled>
+                                    <input type="number" placeholder="08701943851-9832345" id="wallet">
                                 </label>
                             </div>
                         </div>
                         <div class="modal__input-wrapper modal__input-wrapper--decorated">
                             <div class="custom-input">
                                 <label><span class="custom-input__label">Платёжный пароль</span>
-                                    <input type="password" value="123456" placeholder="Введите пароль">
+                                    <input type="password" value="123456" placeholder="Введите пароль" name="paymentPassword" id="payment-password">
                                 </label>
                             </div>
                         </div>
-                        <button class="btn btn--green modal__submit" type="submit">Обменять
+                        <button class="btn btn--green modal__submit" type="submit" id="buy-submit-btn">Обменять
                         </button>
                         <!-- Сообщение, которое нужно показать в случае неудачной отправки данных -->
                         <p class="modal__validation-message modal__validation-message--error">
@@ -421,7 +422,7 @@
 
         Обратите внимание, что при открытии попапа также нужно убрать скролл с body,
         для этого можете использовать класс "scroll-lock"
-    -->
+    ======================================================================================================================================-->
     <div class="modal modal--sell" style="display: none;">
         <div class="modal__wrapper">
             <div class="modal__overlay" id="sell-overlay" data-close-modal></div>
@@ -550,7 +551,7 @@
             </div>
         </div>
     </div>
-
+<!--==============================================================================================================================-->
     <template id="user-table-row__template">
         <!--
             При клонировании данные нужно заменить на настоящие.

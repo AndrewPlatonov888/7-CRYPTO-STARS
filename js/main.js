@@ -1,8 +1,8 @@
 import { renderPoints, hideMapShowList, showMapHideList, hideMap } from './map-render.js';
 // import { activateAdForm, activateFilterForm, deactivateAllForms } from './form-master.js';
-import { renderModalBuy, renderModalSell } from './modal-render.js';
+import { renderModalBuy, renderModalSell, setUserFormSubmit } from './forms-master.js';
 import { tableRender, isSaleBtnActive } from './list-render.js';
-import { getData, ROUTES, ERROR_TEXT } from './network-utils.js';
+import { getData, sendData, ROUTES, ERROR_TEXT } from './network-utils.js';
 import { showAlert, removeAlert } from './utils.js';
 import { activateFilter } from './filter-master.js';
 
@@ -107,9 +107,9 @@ getData(ROUTES.GET_CONTRACTORS_DATA, ERROR_TEXT.CONTRACTORS_DATA_ERROR)
 btnExchangeContainer.addEventListener('click', (evt) => {
   if (evt.target.tagName === 'BUTTON') {
     if (isSaleBtnActive()) {
-      renderModalSell(contractors, evt.target.id);
+      renderModalSell(contractors, user, evt.target.id);
     } else {
-      renderModalBuy(contractors, evt.target.id);
+      renderModalBuy(contractors, user, evt.target.id);
     }
   }
 });
@@ -117,7 +117,7 @@ btnExchangeContainer.addEventListener('click', (evt) => {
 //Хендлер на кнопки 'Обменять' на карте
 btnMapExchangeContainer.addEventListener('click', (evt) => {
   if (evt.target.tagName === 'BUTTON') {
-    renderModalBuy(contractors, evt.target.id);
+    renderModalBuy(contractors, user, evt.target.id);
     map.closePopup();
   }
 });
@@ -159,6 +159,7 @@ export {
   commonIcon,
   starIcon,
   map,
-  contractors
+  contractors,
+  user
 };
 

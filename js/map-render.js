@@ -27,7 +27,7 @@ function hideMapShowList() {
 
 // Функция: показыает карту и прячет таблицу
 function showMapHideList() {
-  mapContainer.style.cssText = 'display: block; opacity: 1';
+  mapContainer.style.cssText = 'display: block';
   userList.style.cssText = 'display: none';
   mapButton.classList.toggle('is-active');
   listButton.classList.toggle('is-active');
