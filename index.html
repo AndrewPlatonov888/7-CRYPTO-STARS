@@ -336,7 +336,7 @@
                                     <input type="number" value="" placeholder="0" id="sendingAmount" name="sendingAmount">
                                 </label>
                                 <!-- Пример стилизации ошибки валидации -->
-                                <div class="custom-input__error">Минимальная сумма — 9 999 999 ₽</div>
+                                <div class="custom-input__error" id="custom-input__error-buy">Минимальная сумма — 9 999 999 ₽</div>
                             </div>
                         </div>
                         <svg class="modal__container-svg" width="14" height="12" aria-hidden="true">
@@ -384,7 +384,7 @@
                             </div>
                         </div>
                         <div class="modal__input-wrapper modal__input-wrapper--decorated">
-                            <div class="custom-input">
+                            <div class="custom-input" id="buy-payment-pw-label">
                                 <label><span class="custom-input__label">Платёжный пароль</span>
                                     <input type="password" value="123456" placeholder="Введите пароль" name="paymentPassword" id="payment-password">
                                 </label>
@@ -393,13 +393,13 @@
                         <button class="btn btn--green modal__submit" type="submit" id="buy-submit-btn">Обменять
                         </button>
                         <!-- Сообщение, которое нужно показать в случае неудачной отправки данных -->
-                        <p class="modal__validation-message modal__validation-message--error">
+                        <p class="modal__validation-message modal__validation-message--error" id="buy-message--error">
                             <svg width="20" height="20" aria-hidden="true">
                                 <use xlink:href="#icon-error"></use>
                             </svg>Ошибка заполнения формы
                         </p>
                         <!-- Сообщение, которое нужно показать в случае успешной отправки данных -->
-                        <p class="modal__validation-message modal__validation-message--success">
+                        <p class="modal__validation-message modal__validation-message--success" id="buy-message--success">
                             <svg width="20" height="20" aria-hidden="true">
                                 <use xlink:href="#icon-success"></use>
                             </svg>Данные успешно отправлены
@@ -471,7 +471,7 @@
                                         все</button>
                                     <input type="number" value="" placeholder="0">
                                 </label>
-                                <div class="custom-input__error">Минимальная сумма — 9 999 999 ₽</div>
+                                <div class="custom-input__error" id="custom-input__error-sell">Минимальная сумма — 9 999 999 ₽</div>
                             </div>
                         </div>
                         <svg class="modal__container-svg" width="14" height="12" aria-hidden="true">
@@ -522,21 +522,21 @@
                         </div>
                         <div class="modal__input-wrapper modal__input-wrapper--decorated">
                             <div class="custom-input">
-                                <label><span class="custom-input__label">Платёжный пароль</span>
-                                    <input type="password" placeholder="Введите пароль">
+                                <label id="sell-payment-pw-label"><span class="custom-input__label">Платёжный пароль</span>
+                                    <input type="password" placeholder="Введите пароль" name="paymentPassword">
                                 </label>
                             </div>
                         </div>
                         <button class="btn btn--green modal__submit" type="submit">Обменять
                         </button>
                         <!-- Сообщение, которое нужно показать в случае неудачной отправки данных -->
-                        <p class="modal__validation-message modal__validation-message--error">
+                        <p class="modal__validation-message modal__validation-message--error" id="sell-message--error" >
                             <svg width="20" height="20" aria-hidden="true">
                                 <use xlink:href="#icon-error"></use>
                             </svg>Ошибка заполнения формы
                         </p>
                         <!-- Сообщение, которое нужно показать в случае успешной отправки данных -->
-                        <p class="modal__validation-message modal__validation-message--success">
+                        <p class="modal__validation-message modal__validation-message--success" id="sell-message--success">
                             <svg width="20" height="20" aria-hidden="true">
                                 <use xlink:href="#icon-success"></use>
                             </svg>Данные успешно отправлены
