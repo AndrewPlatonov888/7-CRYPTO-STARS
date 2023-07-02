@@ -1,5 +1,4 @@
-// import { isEscapeKey, unblockSubmitButton } from './utils.js';
-// import { resetAdForm } from './form-master.js';
+import { buyMessageSuccess, sellMessageSuccess, deactivateAllForms, showFormError, hideFormError, showFormSuccess } from './forms-master.js';
 
 // const confirmationTemplate = document.querySelector('#success').content.querySelector('.success');
 // const confirmationElement = confirmationTemplate.cloneNode(true);
@@ -17,15 +16,6 @@ const ERROR_TEXT = {
   SEND_DATA_ERROR: 'Не удалось отправить форму. Попробуйте повторить отправку через 5 секунд',
 };
 
-// // Функция показа подтверждения успешной отправки фотографии на сервер
-// function showConfirmation() {
-//   document.body.appendChild(confirmationElement);
-// }
-
-// // Функция показа ошибки отправки фотографии на сервер
-// function showMistake() {
-//   document.body.appendChild(mistakeElement);
-// }
 
 // //Функция нажатия на Esc/ на кнопку ОК/ на пространство вне сообщения при появившемся подтверждении отправки
 // const onConfirmationMessageEvent = (evt) => {
@@ -63,15 +53,13 @@ const sendData = (body) => fetch(
   .then((response) => {
     if (!response.ok) {
       console.log('проблема с отправкой');
-      // showMistake();
-      // document.addEventListener('keydown', onMistakeMessageEvent);
-      // document.addEventListener('mouseup', onMistakeMessageEvent);
+      showFormError();
       throw new Error();
     } else {
       console.log('успешно отправили');
-      // showConfirmation();
-      // document.addEventListener('keydown', onConfirmationMessageEvent);
-      // document.addEventListener('mouseup', onConfirmationMessageEvent);
+      deactivateAllForms();
+      hideFormError();
+      showFormSuccess();
     }
   });
   // .catch(() => {
@@ -81,19 +69,6 @@ const sendData = (body) => fetch(
   //   throw new Error(ErrorText.SEND_DATA);
   // });
 
-// //Функция получения данных от сервера
-// function getData(GET_DATA){ fetch(
-//   `${BASE_URL}${GET_DATA}`)
-//   .then((response) => {
-//     if (!response.ok) {
-//       throw new Error();
-//     }
-//     return response.json();
-//   })
-//   .catch(() => {
-//     throw new Error(ERROR_TEXT.GET_DATA);
-//   });
-// }
 
 //Функция получения данных от сервера
 const getData = (ROUTE, ERR_MESSAGE) => fetch(
@@ -107,20 +82,6 @@ const getData = (ROUTE, ERR_MESSAGE) => fetch(
   .catch(() => {
     throw new Error(ERR_MESSAGE);
   });
-
-
-// //Функция получения данных от сервера
-// const getData = () => fetch(
-//   `${BASE_URL}${Route.GET_DATA}`)
-//   .then((response) => {
-//     if (!response.ok) {
-//       throw new Error();
-//     }
-//     return response.json();
-//   })
-//   .catch(() => {
-//     throw new Error(ErrorText.GET_DATA);
-//   });
 
 
 export {

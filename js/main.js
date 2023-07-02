@@ -140,6 +140,7 @@ getData(ROUTES.GET_USER_DATA, ERROR_TEXT.USER_DATA_ERROR)
     // activateFilterForm();
     // activateFilter();
     // renderPoints(offers);
+    console.log('user=');
     console.log(user);
   });
 // .catch(
@@ -153,7 +154,7 @@ getData(ROUTES.GET_USER_DATA, ERROR_TEXT.USER_DATA_ERROR)
 //   }
 // );
 
-// setUserFormSubmit();
+setUserFormSubmit();
 
 export {
   commonIcon,
