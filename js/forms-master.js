@@ -7,17 +7,27 @@ const ALERT_SHOW_TIME = 1000;
 const PAYMENT_PASSWORD = '180712';
 const ERROR_CLASS = 'custom-input__error';
 const ERROR_COLOR = '#ed7358';
+const BASE_CURRENCY = '₽';
 
 const modalBuyContainer = document.querySelector('.modal--buy');
-const modalSellContainer = document.querySelector('.modal--sell');
+// const modalSellContainer = document.querySelector('.modal--sell');
 const buyForm = document.querySelector('.modal-buy');
-const sellForm = document.querySelector('.modal-sell');
+// const sellForm = document.querySelector('.modal-sell');
 const closeBuyFormBtn = document.querySelector('#close-buy-form');
-const closeSellFormBtn = document.querySelector('#close-sell-form');
+// const closeSellFormBtn = document.querySelector('#close-sell-form');
 const buyFormContainer = document.querySelector('#buy-content');
-const sellFormContainer = document.querySelector('#sell-content');
+// const sellFormContainer = document.querySelector('#sell-content');
 
-//BUY FORM INPUTS
+//FORM INPUTS
+const inputType = document.querySelector('#type');
+const sellHeader = document.querySelector('#sell-header');
+const buyHeader = document.querySelector('#buy-header');
+const initialBuyHeader = buyHeader.textContent;
+const receivingCurrencyMarker = document.querySelector('#recieving-currency');
+const initialReceivingCurrency = receivingCurrencyMarker.textContent;
+const sendingCurrencyMarker = document.querySelector('#sending-currency');
+const initialSendingCurrency = sendingCurrencyMarker.textContent;
+
 const inputSendingAmount = document.querySelector('#sendingAmount');
 const inputReceivingAmount = document.querySelector('#receivingAmount');
 const contractorId = document.querySelector('#contractorId');
@@ -35,6 +45,8 @@ const bankCardNumber = document.querySelector('#bankCardNumber');
 const initPlaceholderCardNumber = bankCardNumber.placeholder;
 const buyPwLabelParent = document.querySelector('#buy-payment-pw-label').parentElement;
 const buySelectParent = selectPaymentMethod.parentElement;
+const receivingLabel = document.querySelector('#receiving-label');
+const receivingLabelInitial = receivingLabel.innerHTML;
 
 // messages
 const buyMessageError = document.querySelector('#buy-message--error');
@@ -42,21 +54,22 @@ const sellMessageError = document.querySelector('#sell-message--error');
 const buyMessageSuccess = document.querySelector('#buy-message--success');
 const sellMessageSuccess = document.querySelector('#sell-message--success');
 const buyInputErrorMessage = document.querySelector('#custom-input__error-buy');
-const sellInputErrorMessage = document.querySelector('#custom-input__error-sell');
+// const sellInputErrorMessage = document.querySelector('#custom-input__error-sell');
 const pwErrorMessage = document.createElement('span');
 const selectErrorMessage = document.createElement('span');
 
 //submits
-const buySubmitBtn = document.querySelector('#buy-submit-btn');
-const sellSubmitBtn = document.querySelector('#sell-submit-btn');
+const submitBtn = document.querySelector('#buy-submit-btn');
 
 let globalRate = 0;
-let isBuyFormActive = false;
-let isSellFormActive = false;
+let isBuyFormActive;
+// let isSellFormActive = false;
+let initialCurrency;
+let targetCurrency;
+let enrollmentExchangeAllBtn;
 
 //Подключаем валидатор Pristine на buyForm и sellForm
 const pristineBuy = new Pristine(buyForm);
-const pristineSell = new Pristine(sellForm);
 
 //Универсальная функция, показывающая ошибку формы КУПИТЬ/ПРОДАТЬ
 function showFormError() {
@@ -84,10 +97,19 @@ function hideFormSuccess() {
 
 //Функции, связывающие поля SendingAmount / ReceivingAmount
 function changeSendingAmount() {
-  inputSendingAmount.value = (String((Number(inputReceivingAmount.value) * globalRate)));
+  if (isBuyFormActive) {
+    inputSendingAmount.value = (String((Number(inputReceivingAmount.value) * globalRate)));
+  } else {
+    inputSendingAmount.value = (String((Number(inputReceivingAmount.value) / globalRate)));
+  }
 }
+
 function changeReceivingAmount() {
-  inputReceivingAmount.value = (String((Number(inputSendingAmount.value) / globalRate)));
+  if (isBuyFormActive) {
+    inputReceivingAmount.value = (String((Number(inputSendingAmount.value) / globalRate)));
+  } else {
+    inputReceivingAmount.value = (String((Number(inputSendingAmount.value) * globalRate)));
+  }
 }
 
 
@@ -103,56 +125,34 @@ const onFormEscKeydown = (evt) => {
 
 //Универсальная функция закрытия формы покупки/продажи по нажатию на оверлей
 const onFormOverlayClick = (evt) => {
-  if (isBuyFormActive) {
-    evt.preventDefault();
-    if (!buyFormContainer.contains(evt.target)) {
-      closeForm();
-      if (isMapBtnActive()) {
-        mapContainer.style.cssText = 'display: block';
-      }
-    }
-  }
-  if (isSellFormActive) {
-    if (!sellFormContainer.contains(evt.target)) {
-      closeForm();
-      if (isMapBtnActive()) {
-        mapContainer.style.cssText = 'display: block';
-      }
+  evt.preventDefault();
+  if (!buyFormContainer.contains(evt.target)) {
+    closeForm();
+    if (isMapBtnActive()) {
+      mapContainer.style.cssText = 'display: block';
     }
   }
 };
 
 //Универсальная функция закрытия формы покупки/продажи по нажатию кнопки 'Закрыть'
 function closeForm() {
-  if (isBuyFormActive) {
-    modalBuyContainer.style.cssText = 'display: none';
-    document.removeEventListener('keydown', onFormEscKeydown);
-    document.removeEventListener('mouseup', onFormOverlayClick);
-    closeBuyFormBtn.removeEventListener('click', closeForm);
-    inputSendingAmount.removeEventListener('change', changeReceivingAmount);
-    inputReceivingAmount.removeEventListener('change', changeSendingAmount);
-    exchangeAllBtn.removeEventListener('click', exchangeAll);
-    selectPaymentMethod.removeEventListener('change', setBankCardNumber);
-    buyForm.reset();
-  }
-  if (isSellFormActive) {
-    modalSellContainer.style.cssText = 'display: none';
-    if (isMapBtnActive()) {
-      mapContainer.style.cssText = 'display: none';
-    }
-    document.removeEventListener('keydown', onFormEscKeydown);
-    document.removeEventListener('mouseup', onFormOverlayClick);
-    sellForm.reset();
-    closeSellFormBtn.removeEventListener('click', closeForm);
-  }
+  modalBuyContainer.style.cssText = 'display: none';
+  removeFormListeners();
+  receivingCurrencyMarker.textContent = initialReceivingCurrency;
+  sendingCurrencyMarker.textContent = initialSendingCurrency;
+  buyForm.reset();
   if (isMapBtnActive()) {
     mapContainer.style.cssText = 'display: block';
   }
   document.body.style.position = '';
   document.body.style.top = '';
+  if (!isBuyFormActive) {
+    enrollmentExchangeAllBtn.removeEventListener('click', exchangeAll);
+    enrollmentExchangeAllBtn.remove();
+  }
 }
 
-//Функция генерации SELECT'а
+//Универсальная функция генерации SELECT'а
 function generateOptionsList(paymentMethodsList, userData) {
   const firstValue = selectPaymentMethod.firstElementChild.value;
   const userPaymentData = Object.values(userData.paymentMethods); // вытаскиваем в массив
@@ -170,16 +170,28 @@ function generateOptionsList(paymentMethodsList, userData) {
     opt.setAttribute('value', paymentMethodsList[i].provider);
     opt.innerHTML = paymentMethodsList[i].provider;
     if (!userPaymentMethods.includes(paymentMethodsList[i].provider) && paymentMethodsList[i].provider !== 'Cash in person') {
-      opt.setAttribute('disabled', '');
+      opt.setAttribute('disabled', ''); // если у покупателя отсутсвует такой метод платежа - то отключаем его в селекте
     }
     selectPaymentMethod.appendChild(opt);
   }
 }
 
-//Функция 'обменять ВСЕ'
+// Функция создания дополнительной кнопки "Обменять все" над полем "Зачисление"
+function createEnrollmentExchangeAllBtn() {
+  enrollmentExchangeAllBtn = exchangeAllBtn.cloneNode(true);
+  enrollmentExchangeAllBtn.setAttribute('id', 'enrollment-exchange-all');
+  receivingLabel.appendChild(enrollmentExchangeAllBtn);
+  enrollmentExchangeAllBtn.addEventListener('click', exchangeAll);
+}
+
+//Функции 'обменять ВСЕ'
 function exchangeAll() {
   inputSendingAmount.value = inputSendingAmount.max;
-  inputReceivingAmount.value = (String((Number(inputSendingAmount.value) / globalRate)));
+  if (isBuyFormActive) {
+    inputReceivingAmount.value = (String((Number(inputSendingAmount.value) / globalRate)));
+  } else {
+    inputReceivingAmount.value = (String((Number(inputSendingAmount.value) * globalRate)));
+  }
 }
 
 //Функция установки номера карты/аккаунта в поле bankCardNumber по выбору метода платежа
@@ -195,60 +207,84 @@ function setBankCardNumber() {
 
 //Функция блокировки всех форм после успешной отправки
 function deactivateAllForms() {
-  if (isBuyFormActive) {
-    inputSendingAmount.removeEventListener('change', changeReceivingAmount);// Обработчик на связанные поля SendingAmount ReceivingAmount
-    inputReceivingAmount.removeEventListener('change', changeSendingAmount);// Обработчик на связанные поля SendingAmount ReceivingAmount
-    exchangeAllBtn.removeEventListener('click', exchangeAll);
-    inputSendingAmount.setAttribute('disabled', '');
-    inputReceivingAmount.setAttribute('disabled', '');
-    selectPaymentMethod.setAttribute('disabled', '');
-    paymentPassword.setAttribute('disabled', '');
-    buySubmitBtn.setAttribute('disabled', '');
-    exchangeAllBtn.setAttribute('disabled', '');
-  } else {
-  }
+  exchangeAllBtn.removeEventListener('click', exchangeAll);
+  inputSendingAmount.setAttribute('disabled', '');
+  inputReceivingAmount.setAttribute('disabled', '');
+  selectPaymentMethod.setAttribute('disabled', '');
+  paymentPassword.setAttribute('disabled', '');
+  submitBtn.setAttribute('disabled', '');
+  exchangeAllBtn.setAttribute('disabled', '');
 }
 
 //Функция разблокировки всех форм при открытии формы
 function activateAllForms() {
-  if (isBuyFormActive) {
-    inputSendingAmount.removeAttribute('disabled', '');
-    inputReceivingAmount.removeAttribute('disabled', '');
-    selectPaymentMethod.removeAttribute('disabled', '');
-    paymentPassword.removeAttribute('disabled', '');
-    buySubmitBtn.removeAttribute('disabled', '');
-    exchangeAllBtn.removeAttribute('disabled', '');
-    bankCardNumber.placeholder = initPlaceholderCardNumber;
-  }
-  if (isSellFormActive) {
-    buyInputErrorMessage.innerHTML = '';
-    sellInputErrorMessage.innerHTML = '';
+  inputSendingAmount.removeAttribute('disabled', '');
+  inputReceivingAmount.removeAttribute('disabled', '');
+  selectPaymentMethod.removeAttribute('disabled', '');
+  paymentPassword.removeAttribute('disabled', '');
+  submitBtn.removeAttribute('disabled', '');
+  exchangeAllBtn.removeAttribute('disabled', '');
+  bankCardNumber.placeholder = initPlaceholderCardNumber;
+}
+
+//Функция определения исходной валюты
+function detectInitialCurrency(isBuyFormSelectorEnabled) {
+  if (isBuyFormSelectorEnabled) {
+    initialCurrency = 'RUB';
+    targetCurrency = 'KEKS';
+  } else {
+    initialCurrency = 'KEKS';
+    targetCurrency = 'RUB';
   }
 }
 
-// Функция отрисовки формы для ПОКУПКИ
-function renderModalBuy(listOfContractors, userInfo, idMarker) {
-  hideMap();
-  hideFormSuccess();
-  hideFormError();
-  activateAllForms();
-  isBuyFormActive = true;
-  const space = String.fromCharCode(160);
-  const maxAmount = userInfo.balances.filter((res) => res.currency === 'RUB');
-  const contractor = listOfContractors.filter((res) => res.id === idMarker);
-  globalRate = Number(contractor[0].exchangeRate);
-  modalBuyContainer.style.cssText = 'display: block';
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${window.scrollY}px`;
+// Функция установки всех листенеров на форму
+function setFormListeners() {
   document.addEventListener('keydown', onFormEscKeydown);
   document.addEventListener('mouseup', onFormOverlayClick);
   closeBuyFormBtn.addEventListener('click', closeForm); // Хендлер на закрытие формы покупки кнопкой
   inputSendingAmount.addEventListener('change', changeReceivingAmount);// Обработчик на связанные поля SendingAmount ReceivingAmount
   inputReceivingAmount.addEventListener('change', changeSendingAmount);// Обработчик на связанные поля SendingAmount ReceivingAmount
   exchangeAllBtn.addEventListener('click', exchangeAll);
+  selectPaymentMethod.addEventListener('change', setBankCardNumber); // по выбору метода платежа, ставим в поле номер карты/номер счета клиента
+}
+
+// Функция удаления всех листенеров
+function removeFormListeners() {
+  document.removeEventListener('keydown', onFormEscKeydown);
+  document.removeEventListener('mouseup', onFormOverlayClick);
+  closeBuyFormBtn.removeEventListener('click', closeForm);
+  inputSendingAmount.removeEventListener('change', changeReceivingAmount);
+  inputReceivingAmount.removeEventListener('change', changeSendingAmount);
+  exchangeAllBtn.removeEventListener('click', exchangeAll);
+  selectPaymentMethod.removeEventListener('change', setBankCardNumber);
+}
+
+// Универсальная функция отрисовки ФОРМЫ (BUY/SELL)
+function renderModalBuy(listOfContractors, userInfo, idMarker, isBuyFormSwitcherEnabled) {
+  document.body.style.position = 'fixed'; // убираем скролл
+  document.body.style.top = `-${window.scrollY}px`; // убираем скролл
+  hideMap();
+  hideFormSuccess();
+  hideFormError();
+  detectInitialCurrency(isBuyFormSwitcherEnabled);
+  activateAllForms();
+  isBuyFormActive = isBuyFormSwitcherEnabled;
+  const space = String.fromCharCode(160);
+  const maxAmount = userInfo.balances.filter((res) => res.currency === initialCurrency);
+  const contractor = listOfContractors.filter((res) => res.id === idMarker);
+
+  console.log('contractor=');
+  console.log(contractor);
+  globalRate = Number(contractor[0].exchangeRate);
+  modalBuyContainer.style.cssText = 'display: block';
+  setFormListeners();
   userName.textContent = userInfo.userName;
-  rate.textContent = `${contractor[0].exchangeRate}${space}${'₽'}`;
-  limits.innerHTML = `${contractor[0].minAmount}${space}${'₽'}${space}${'-'}${space}${maxAmount[0].amount}${space}${'₽'}`;
+  rate.textContent = `${contractor[0].exchangeRate}${space}${BASE_CURRENCY}`;
+  limits.innerHTML = `${contractor[0].minAmount}${space}${BASE_CURRENCY}${space}${'-'}${space}${maxAmount[0].amount}${space}${initialCurrency}`;
+  if (!isBuyFormSwitcherEnabled) {
+    limits.innerHTML = `${contractor[0].minAmount}${space}${BASE_CURRENCY}${space}${'-'}${space}${(maxAmount[0].amount * globalRate).toFixed(0)}${space}${BASE_CURRENCY}`;
+  }
   buyInputErrorMessage.innerHTML = '';
   inputSendingAmount.min = contractor[0].minAmount;
   inputSendingAmount.max = maxAmount[0].amount;
@@ -256,46 +292,41 @@ function renderModalBuy(listOfContractors, userInfo, idMarker) {
   inputReceivingAmount.min = contractor[0].minAmount / globalRate;
   contractorId.value = contractor[0].id;
   exchangeRate.value = globalRate;
-  sendingCurrency.value = contractor[0].paymentMethods[0].currency;
-  receivingCurrency.value = contractor[0].balance.currency;
-  generateOptionsList(contractor[0].paymentMethods, userInfo);
-  selectPaymentMethod.addEventListener('change', setBankCardNumber); // по выбору метода платежа, ставим в поле номер карты/номер счета клиента
+  sendingCurrency.value = initialCurrency;
+  sendingCurrencyMarker.textContent = initialCurrency;
+  receivingCurrency.value = targetCurrency;
+  receivingCurrencyMarker.textContent = targetCurrency;
   inputWallet.setAttribute('disabled', '');
-  inputWallet.placeholder = userInfo.wallet.address;
-  // paymentPassword.value = PAYMENT_PASSWORD;
+  if (isBuyFormSwitcherEnabled) {
+    generateOptionsList(contractor[0].paymentMethods, userInfo);
+    inputWallet.placeholder = userInfo.wallet.address;
+    inputSendingAmount.min = contractor[0].minAmount;
+    inputSendingAmount.max = maxAmount[0].amount;
+    inputReceivingAmount.max = contractor[0].balance.amount;
+    inputReceivingAmount.min = contractor[0].minAmount / globalRate;
+    inputType.value = 'BUY';
+    buyHeader.textContent = initialBuyHeader;
+  } else {
+    buyHeader.textContent = sellHeader.textContent;
+    inputType.value = 'SELL';
+    generateOptionsList(userInfo.paymentMethods, userInfo);
+    inputWallet.placeholder = contractor[0].wallet.address;
+    inputSendingAmount.min = contractor[0].minAmount / globalRate;
+    inputSendingAmount.max = maxAmount[0].amount;
+    inputReceivingAmount.max = contractor[0].balance.amount;
+    inputReceivingAmount.min = contractor[0].minAmount;
+    createEnrollmentExchangeAllBtn();
+  }
   paymentPassword.value = '';
-  //создаем сообщение об ошибке для поля Платежный пароль
-  pwErrorMessage.classList.add(ERROR_CLASS);
+  pwErrorMessage.classList.add(ERROR_CLASS); //Создаем сообщение об ошибке для поля Платежный пароль
   pwErrorMessage.innerHTML = '';
   buyPwLabelParent.appendChild(pwErrorMessage);
-  //создаем сообщение об ошибке для SELECT
-  selectErrorMessage.style.cssText = `${'color: '}${ERROR_COLOR}${'; font-weight: 400'}`;
+  selectErrorMessage.style.cssText = `${'color: '}${ERROR_COLOR}${'; font-weight: 400'}`; //Создаем сообщение об ошибке для SELECT
   selectErrorMessage.innerHTML = '';
   buySelectParent.appendChild(selectErrorMessage);
 }
 
-// Функция отрисовки формы для ПРОДАЖИ
-function renderModalSell(listOfContractors, userInfo, idMarker) {
-  hideMap();
-  hideFormSuccess();
-  hideFormError();
-  activateAllForms();
-  isSellFormActive = true;
-  modalSellContainer.style.cssText = 'display: block';
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${window.scrollY}px`;
-  document.addEventListener('keydown', onFormEscKeydown);
-  document.addEventListener('mouseup', onFormOverlayClick);
-  // Обработчики на selector'ы timein и timeout
-  inputSendingAmount.addEventListener('change', changeReceivingAmount);
-  inputReceivingAmount.addEventListener('change', changeSendingAmount);
-  closeSellFormBtn.addEventListener('click', closeForm); // Хендлер на закрытие формы продажи кнопкой
-  const contractor = listOfContractors.filter((res) => res.id === idMarker);
-}
-
-
 // === В А Л И Д А Ц И Я =============================================================================
-
 
 //Функция валидации поля SendingAmount
 function validateSendingAmount(field) {
@@ -327,7 +358,10 @@ function validateSendingAmount(field) {
 
 // Функция валидации поля ReceivingAmount
 function validateReceivingAmount(field) {
-  const rub = Number(field) * globalRate;
+  let rub = Number(field) * globalRate;
+  if (!isBuyFormActive) {
+    rub = Number(field) / globalRate;
+  }
   if (Number(field) > Number(inputReceivingAmount.max)) {
     showFormError();
     buyInputErrorMessage.innerHTML = `${'У продавца доступно максимум '}${inputReceivingAmount.max}${' '}${receivingCurrency.value}`;
@@ -407,13 +441,13 @@ const setUserFormSubmit = (onSuccess) => {
     evt.preventDefault();
     let currentActiveForm;
     const isValidBuy = pristineBuy.validate();
-    const isValidSell = pristineSell.validate();
+    // const isValidSell = pristineSell.validate();
     if (isBuyFormActive) {
       currentActiveForm = isValidBuy;
     }
-    if (isSellFormActive) {
-      currentActiveForm = isValidSell;
-    }
+    // if (isSellFormActive) {
+    //   currentActiveForm = isValidSell;
+    // }
     if (currentActiveForm) {
       sendData(new FormData(evt.target))
         .then(onSuccess)
@@ -434,7 +468,6 @@ const setUserFormSubmit = (onSuccess) => {
 
 export {
   renderModalBuy,
-  renderModalSell,
   onFormEscKeydown,
   setUserFormSubmit,
   buyMessageSuccess,
@@ -442,5 +475,7 @@ export {
   deactivateAllForms,
   showFormError,
   hideFormError,
-  showFormSuccess
+  showFormSuccess,
+  isBuyFormActive,
+  // isSellFormActive
 };

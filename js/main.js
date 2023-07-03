@@ -1,6 +1,6 @@
 import { renderPoints, hideMapShowList, showMapHideList, hideMap } from './map-render.js';
 // import { activateAdForm, activateFilterForm, deactivateAllForms } from './form-master.js';
-import { renderModalBuy, renderModalSell, setUserFormSubmit } from './forms-master.js';
+import { renderModalBuy, setUserFormSubmit } from './forms-master.js';
 import { tableRender, isSaleBtnActive } from './list-render.js';
 import { getData, sendData, ROUTES, ERROR_TEXT } from './network-utils.js';
 import { showAlert, removeAlert } from './utils.js';
@@ -24,6 +24,7 @@ const ZOOM = 9;
 const ALERT_SHOW_TIME = 5000; // в милли секундах
 let contractors = [];
 let user = [];
+let buyFormTrigger;
 
 // Начальные координаты карты
 const startCoordinate = {
@@ -107,17 +108,21 @@ getData(ROUTES.GET_CONTRACTORS_DATA, ERROR_TEXT.CONTRACTORS_DATA_ERROR)
 btnExchangeContainer.addEventListener('click', (evt) => {
   if (evt.target.tagName === 'BUTTON') {
     if (isSaleBtnActive()) {
-      renderModalSell(contractors, user, evt.target.id);
+      buyFormTrigger = false;
     } else {
-      renderModalBuy(contractors, user, evt.target.id);
+      buyFormTrigger = true;
+      renderModalBuy(contractors, user, evt.target.id, buyFormTrigger);
+      return;
     }
+    renderModalBuy(contractors, user, evt.target.id, buyFormTrigger);
   }
 });
 
 //Хендлер на кнопки 'Обменять' на карте
 btnMapExchangeContainer.addEventListener('click', (evt) => {
   if (evt.target.tagName === 'BUTTON') {
-    renderModalBuy(contractors, user, evt.target.id);
+    buyFormTrigger = true;
+    renderModalBuy(contractors, user, evt.target.id, buyFormTrigger);
     map.closePopup();
   }
 });

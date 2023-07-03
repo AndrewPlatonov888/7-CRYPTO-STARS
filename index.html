@@ -299,7 +299,7 @@
         <div class="modal__wrapper">
             <div class="modal__overlay" id="buy-overlay" data-close-modal></div>
             <div class="modal__content" id="buy-content">
-                <h2 class="modal__description">Покупка криптовалюты</h2>
+                <h2 class="modal__description" id="buy-header">Покупка криптовалюты</h2>
                 <!-- Не забудьте указать верный action-атрибут -->
                 <form class="modal-buy" method="post"  enctype="multipart/form-data" action="https://cryptostar.grading.pages.academy/" >
                     <!--
@@ -307,7 +307,7 @@
                         атрибуты name (их список вы найдёте в техзадании), а часть полей
                         вообще отправляется скрытыми
                     -->
-                    <input type="hidden" name="type" value="BUY">
+                    <input type="hidden" name="type" value="BUY" id="type">
                     <input type="hidden" name="contractorId" id="contractorId">
                     <input type="hidden" name="exchangeRate" id="exchangeRate">
                     <input type="hidden" name="sendingCurrency" id="sendingCurrency">
@@ -330,7 +330,7 @@
                         <div class="modal__input-wrapper modal__input-wrapper--min">
                             <div class="custom-input">
                                 <label><span class="custom-input__label">Оплата</span><span
-                                        class="custom-input__unit">₽</span>
+                                        class="custom-input__unit" id="sending-currency">₽</span>
                                     <button class="btn btn--textblue custom-input__btn" type="button" id="exchange-all">обменять все
                                     </button>
                                     <input type="number" value="" placeholder="0" id="sendingAmount" name="sendingAmount">
@@ -344,8 +344,8 @@
                         </svg>
                         <div class="modal__input-wrapper modal__input-wrapper--min">
                             <div class="custom-input">
-                                <label><span class="custom-input__label">Зачисление</span><span
-                                        class="custom-input__unit">KEKS</span>
+                                <label id ="receiving-label"><span class="custom-input__label">Зачисление</span><span
+                                        class="custom-input__unit" id="recieving-currency">KEKS</span>
                                     <input type="number" placeholder="0" id="receivingAmount" name="receivingAmount">
                                 </label>
                             </div>
@@ -427,7 +427,7 @@
         <div class="modal__wrapper">
             <div class="modal__overlay" id="sell-overlay" data-close-modal></div>
             <div class="modal__content" id="sell-content">
-                <h2 class="modal__description">Продажа криптовалюты</h2>
+                <h2 class="modal__description" id="sell-header">Продажа криптовалюты</h2>
                 <!-- Не забудьте указать верный action-атрибут -->
                 <form class="modal-sell" method="post">
                     <!--
