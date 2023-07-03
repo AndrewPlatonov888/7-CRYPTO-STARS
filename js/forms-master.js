@@ -46,7 +46,6 @@ const initPlaceholderCardNumber = bankCardNumber.placeholder;
 const buyPwLabelParent = document.querySelector('#buy-payment-pw-label').parentElement;
 const buySelectParent = selectPaymentMethod.parentElement;
 const receivingLabel = document.querySelector('#receiving-label');
-const receivingLabelInitial = receivingLabel.innerHTML;
 
 // messages
 const buyMessageError = document.querySelector('#buy-message--error');
