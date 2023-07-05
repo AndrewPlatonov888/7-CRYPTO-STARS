@@ -1,4 +1,6 @@
 import { getCheckedCheckBoxes } from './filter-master.js';
+import { isMapBtnActive } from './map-render.js';
+import { showEmptyAlert } from './utils.js';
 const sellButton = document.querySelector('#sell-btn');
 
 // Функция генерации HTML-кода для вывода списка платежных систем
@@ -38,8 +40,11 @@ function isSaleBtnActive() {
 
 ////Функция отрисовки таблицы
 function tableRender(contractorsList) {
+  if (contractorsList.length === 0 && !isMapBtnActive()) { // если массив с данными пустой - показываем сообщение emptyAlert
+    showEmptyAlert();
+  }
   let newcontractorsList = contractorsList;
-  if (isSaleBtnActive()){
+  if (isSaleBtnActive()) {
     newcontractorsList = newcontractorsList.filter((res) => res.status === 'buyer'); // отсеиваем всеx не продавцов
   } else {
     newcontractorsList = newcontractorsList.filter((res) => res.status === 'seller'); // отсеиваем всеx не покупателей

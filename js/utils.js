@@ -1,27 +1,33 @@
-const alertContainer = document.createElement('div');
 const submitButton = document.querySelector('#buy-submit-btn');
+const containerLoadError = document.querySelector('#load-error-container');
+const containerUserProfile = document.querySelector('.user-profile');
+const containerMain = document.querySelector('#main-container');
+const containerEmptyData = document.querySelector('#empty-data-container');
 
-//Функция показа сообщения об ошибке
-const showAlert = (message) => {
-  alertContainer.style.zIndex = '100';
-  alertContainer.style.position = 'absolute';
-  alertContainer.style.left = '0';
-  alertContainer.style.top = '0';
-  alertContainer.style.right = '0';
-  alertContainer.style.padding = '10px 3px';
-  alertContainer.style.fontSize = '20px';
-  alertContainer.style.textAlign = 'center';
-  alertContainer.style.backgroundColor = 'yellow';
-  alertContainer.style.color = 'red';
-  alertContainer.classList.add = 'alert__container';
-  alertContainer.textContent = message;
-  document.body.append(alertContainer);
-};
 
-//Функция удаления сообщения об ошибке
-const removeAlert = () => {
-  alertContainer.remove();
-};
+//Функция показа контейнера с сообщением об ошибке загрузки
+function showLoadAlert() {
+  containerUserProfile.style.cssText = 'display: none';
+  containerMain.style.cssText = 'display: none';
+  containerLoadError.style.cssText = 'display: block';
+  containerEmptyData.style.cssText = 'display: none';
+}
+
+//Функция показа контейнера с сообщением об ошибке загрузки
+function showEmptyAlert() {
+  containerUserProfile.style.cssText = 'display: flex';
+  containerMain.style.cssText = 'display: none';
+  containerLoadError.style.cssText = 'display: none';
+  containerEmptyData.style.cssText = 'display: block';
+}
+
+//Функция удаления контейнера с сообщением об ошибке загрузки
+function removeAlerts() {
+  containerUserProfile.style.cssText = 'display: flex';
+  containerMain.style.cssText = 'display: block';
+  containerLoadError.style.cssText = 'display: none';
+  containerEmptyData.style.cssText = 'display: none';
+}
 
 //Функция проверки нажатия на ESC
 const isEscapeKey = (evt) => evt.key === 'Escape';
@@ -37,15 +43,11 @@ const unblockSubmitButton = () => {
 };
 
 export {
-  // shuffleRange,
-  // getRandomInteger,
-  // getRandomArrayElement,
-  // getSet,
-  showAlert,
-  removeAlert,
+  showLoadAlert,
+  showEmptyAlert,
+  removeAlerts,
   blockSubmitButton,
   unblockSubmitButton,
-  // roundHundred,
   isEscapeKey
 };
 

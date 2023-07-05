@@ -4,19 +4,15 @@ import { sendData } from './network-utils.js';
 import { user } from './main.js';
 
 const ALERT_SHOW_TIME = 1000;
-const PAYMENT_PASSWORD = '180712';
+// const PAYMENT_PASSWORD = '180712';
 const ERROR_CLASS = 'custom-input__error';
 const ERROR_COLOR = '#ed7358';
 const BASE_CURRENCY = '₽';
 
 const modalBuyContainer = document.querySelector('.modal--buy');
-// const modalSellContainer = document.querySelector('.modal--sell');
 const buyForm = document.querySelector('.modal-buy');
-// const sellForm = document.querySelector('.modal-sell');
 const closeBuyFormBtn = document.querySelector('#close-buy-form');
-// const closeSellFormBtn = document.querySelector('#close-sell-form');
 const buyFormContainer = document.querySelector('#buy-content');
-// const sellFormContainer = document.querySelector('#sell-content');
 
 //FORM INPUTS
 const inputType = document.querySelector('#type');
@@ -53,7 +49,6 @@ const sellMessageError = document.querySelector('#sell-message--error');
 const buyMessageSuccess = document.querySelector('#buy-message--success');
 const sellMessageSuccess = document.querySelector('#sell-message--success');
 const buyInputErrorMessage = document.querySelector('#custom-input__error-buy');
-// const sellInputErrorMessage = document.querySelector('#custom-input__error-sell');
 const pwErrorMessage = document.createElement('span');
 const selectErrorMessage = document.createElement('span');
 
@@ -62,7 +57,6 @@ const submitBtn = document.querySelector('#buy-submit-btn');
 
 let globalRate = 0;
 let isBuyFormActive;
-// let isSellFormActive = false;
 let initialCurrency;
 let targetCurrency;
 let enrollmentExchangeAllBtn;
@@ -183,7 +177,7 @@ function createEnrollmentExchangeAllBtn() {
   enrollmentExchangeAllBtn.addEventListener('click', exchangeAll);
 }
 
-//Функции 'обменять ВСЕ'
+//Функция 'обменять ВСЕ'
 function exchangeAll() {
   inputSendingAmount.value = inputSendingAmount.max;
   if (isBuyFormActive) {
@@ -272,9 +266,6 @@ function renderModalBuy(listOfContractors, userInfo, idMarker, isBuyFormSwitcher
   const space = String.fromCharCode(160);
   const maxAmount = userInfo.balances.filter((res) => res.currency === initialCurrency);
   const contractor = listOfContractors.filter((res) => res.id === idMarker);
-
-  console.log('contractor=');
-  console.log(contractor);
   globalRate = Number(contractor[0].exchangeRate);
   modalBuyContainer.style.cssText = 'display: block';
   setFormListeners();
@@ -433,21 +424,16 @@ pristineBuy.addValidator(
   validateSelectPaymentMethods
 );
 
-
 //Универсальный Хендлер на отправку формы Buy и Sell
 const setUserFormSubmit = (onSuccess) => {
   buyForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    let currentActiveForm;
+    // let currentActiveForm;
     const isValidBuy = pristineBuy.validate();
-    // const isValidSell = pristineSell.validate();
-    if (isBuyFormActive) {
-      currentActiveForm = isValidBuy;
-    }
-    // if (isSellFormActive) {
-    //   currentActiveForm = isValidSell;
+    // if (isBuyFormActive) {
+    //   currentActiveForm = isValidBuy;
     // }
-    if (currentActiveForm) {
+    if (isValidBuy) {
       sendData(new FormData(evt.target))
         .then(onSuccess)
         .catch(

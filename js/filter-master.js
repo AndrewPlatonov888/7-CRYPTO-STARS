@@ -1,9 +1,11 @@
 import { contractors } from './main.js';
 import { deleteRenderedPoints, renderPoints } from './map-render.js';
-import { tableRender } from './list-render.js';
+import { isSaleBtnActive, tableRender } from './list-render.js';
 
 const DEBOUNCE_TIMEOUT_DELAY = 500; // 500 миллисекунд
 const filterContainer = document.querySelector('.custom-toggle');
+
+let isEmptyAlert;
 
 
 //Функция поучения всех чекнутых чекбоксов (возвращает массив)
@@ -32,7 +34,14 @@ function setFilteringMenusChange(callback) {
         }
       }
     }
+    isEmptyAlert = false;
+    if (newcontractors.length === 0){
+      isEmptyAlert = true;
+    }
     tableRender(newcontractors);
+    if (isSaleBtnActive()) { // Блокируем отображение на карте поинтов-продавцов, при включенной кнопке "Продать"
+      newcontractors = [];
+    }
     callback(newcontractors);
   });
 }
@@ -61,5 +70,6 @@ export {
   setFilteringMenusChange,
   debounce,
   getCheckedCheckBoxes,
-  // getActiveButtons
+  filterContainer,
+  isEmptyAlert
 };

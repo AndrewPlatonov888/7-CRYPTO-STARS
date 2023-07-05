@@ -33,7 +33,6 @@ function showMapHideList() {
   listButton.classList.toggle('is-active');
 }
 
-
 // Функция генерации HTML-кода для вывода списка платежных систем
 function createPaymentsList(optionsList) {
   let list = '';
@@ -45,7 +44,6 @@ function createPaymentsList(optionsList) {
 
 //Функция отрисовки отдельной карточки отдельного объявления
 function pointRender(pointInfo) {
-
   const pointTemplate = document.querySelector('#map-baloon__template').content.querySelector('.user-card');
   pointTemplate.style.cssText = 'width: 112px';
   pointTemplate.querySelector('.user-card__user-name').style.cssText = 'width: 112px';

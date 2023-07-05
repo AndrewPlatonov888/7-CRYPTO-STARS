@@ -2,13 +2,12 @@ import { renderPoints, hideMapShowList, showMapHideList, hideMap } from './map-r
 // import { activateAdForm, activateFilterForm, deactivateAllForms } from './form-master.js';
 import { renderModalBuy, setUserFormSubmit } from './forms-master.js';
 import { tableRender, isSaleBtnActive } from './list-render.js';
-import { getData, sendData, ROUTES, ERROR_TEXT } from './network-utils.js';
-import { showAlert, removeAlert } from './utils.js';
-import { activateFilter } from './filter-master.js';
+import { getData, ROUTES } from './network-utils.js';
+import { showLoadAlert, removeAlerts, showEmptyAlert } from './utils.js';
+import { activateFilter, filterContainer, isEmptyAlert } from './filter-master.js';
 
 
 const btnListMapContainer = document.querySelector('#list-map-btn');
-const exchangeButton = document.querySelectorAll('.btn--greenborder');
 const btnBuySellContainer = document.querySelector('#buy-sell-btn');
 const btnExchangeContainer = document.querySelector('.users-list__table-body');
 const btnMapExchangeContainer = document.querySelector('.map');
@@ -16,12 +15,14 @@ const buyButton = document.querySelector('#buy-btn');
 const sellButton = document.querySelector('#sell-btn');
 const mapButton = document.querySelector('#map-btn');
 const listButton = document.querySelector('#list-btn');
+const userProfileCrypto = document.querySelector('#user-crypto-balance');
+const userProfileFiat = document.querySelector('#user-fiat-balance');
+const userProfileName = document.querySelector('#user-profile-name');
 
 
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const COPYRIGHT = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 const ZOOM = 9;
-const ALERT_SHOW_TIME = 5000; // в милли секундах
 let contractors = [];
 let user = [];
 let buyFormTrigger;
@@ -35,23 +36,20 @@ const startCoordinate = {
 // Прячем карту на старте
 hideMap();
 
+//Функция наполения блока User Profile
+function fillUserProfile() {
+  userProfileName.textContent = user.userName;
+  const userFiatValue = user.balances.filter((res) => res.currency === 'RUB');
+  userProfileFiat.textContent = userFiatValue[0].amount;
+  const userCryptoValue = user.balances.filter((res) => res.currency === 'KEKS');
+  userProfileCrypto.textContent = userCryptoValue[0].amount;
+}
 
-// Хендлер на кнопки 'Список' и 'Карта'
-btnListMapContainer.addEventListener('click', (evt) => {
-  if (evt.target === mapButton) {
-    showMapHideList();
-  }
-  if (evt.target === listButton) {
-    hideMapShowList();
-  }
-});
-
-// Функция: показыает карту и прячет таблицу
+// Функция переключения кнопок 'Купить' и 'Продать'
 function activateBuyOrSellBtn() {
   buyButton.classList.toggle('is-active');
   sellButton.classList.toggle('is-active');
 }
-
 
 // Инициализируем Леафлет (вызываем у L метод map(), чтобы создать карту), прикручиваем ее к блоку map и задаем начальный зум и начальные координаты
 const map = L.map('map-container')
@@ -61,11 +59,6 @@ const map = L.map('map-container')
 L.tileLayer(TILE_LAYER, {
   attribution: COPYRIGHT
 }).addTo(map);
-
-// // Функция закрытия всех попапов на карте
-// function closeMapPopups(){
-//   map.closePopup();
-// }
 
 // Задаем параметры иконок, используемых для отображения объявлений
 const commonIcon = L.icon({
@@ -80,29 +73,83 @@ const starIcon = L.icon({
 });
 
 
-// Получаем с сервера данные контракторов
-getData(ROUTES.GET_CONTRACTORS_DATA, ERROR_TEXT.CONTRACTORS_DATA_ERROR)
-  .then((ads) => {
-    contractors = ads;
-    // activateFilterForm();
-    // activateFilter();
-    console.log(contractors);
-    console.log(contractors[0]);
-    activateFilter();
-    tableRender(contractors);
-    renderPoints(contractors);
-  });
-// .catch(
-//   (err) => {
-//     showAlert(err);
-//     // blockSubmitButton();
-//     setTimeout(() => {
-//       // unblockSubmitButton();
-//       removeAlert();
-//     }, ALERT_SHOW_TIME);
-//   }
-// );
+// // Получаем с сервера данные контракторов
+// getData(ROUTES.GET_CONTRACTORS_DATA, ERROR_TEXT.CONTRACTORS_DATA_ERROR)
+//   .then((ads) => {
+//     removeAlerts();
+//     contractors = ads;
+//     activateFilter();
+//     tableRender(contractors);
+//     renderPoints(contractors);
+//   })
+//   .catch(
+//     () => {
+//       showLoadAlert();
+//     }
+//   );
 
+// // Получаем с сервера данные пользователя
+// getData(ROUTES.GET_USER_DATA, ERROR_TEXT.USER_DATA_ERROR)
+//   .then((info) => {
+//     removeAlerts();
+//     user = info;
+//   })
+//   .catch(
+//     () => {
+//       showLoadAlert();
+//     }
+//   );
+
+
+// Функция получения данных от сервера на старте
+function getDataOnStart() {
+  // Получаем с сервера данные юзера
+  getData(ROUTES.GET_USER_DATA)
+    .then((info) => {
+      removeAlerts();
+      user = info;
+      if (user.length === 0) {
+        showLoadAlert();
+      } else {
+        fillUserProfile(); //Наполняем информацией блок User Profile
+        // Получаем с сервера данные контракторов
+        getData(ROUTES.GET_CONTRACTORS_DATA)
+          .then((ads) => {
+            contractors = ads;
+            activateFilter();
+            tableRender(contractors);
+            renderPoints(contractors);
+            // }
+          })
+          .catch(
+            () => {
+              showEmptyAlert();
+            }
+          );
+      }
+    })
+    .catch(
+      () => {
+        showLoadAlert();
+      }
+    );
+}
+
+getDataOnStart(); // Получение с сервера данных пользователя и данных контрагентов
+
+// Хендлер на кнопки 'Список' и 'Карта'
+btnListMapContainer.addEventListener('click', (evt) => {
+  if (evt.target === mapButton) {
+    showMapHideList();
+  }
+  if (evt.target === listButton) {
+    hideMapShowList();
+    map.closePopup();
+    if (isEmptyAlert) {
+      showEmptyAlert();
+    }
+  }
+});
 
 //Хендлер на кнопки 'Обменять' в списке
 btnExchangeContainer.addEventListener('click', (evt) => {
@@ -127,6 +174,12 @@ btnMapExchangeContainer.addEventListener('click', (evt) => {
   }
 });
 
+// Функция эмулирующая событие "Change" в фильтре
+function emulateChangeEvent() {
+  const changeEvent = new Event('change');
+  filterContainer.dispatchEvent(changeEvent);
+}
+
 // Хендлер на кнопки 'Купить' и 'Продать'
 btnBuySellContainer.addEventListener('click', (evt) => {
   evt.preventDefault();
@@ -134,34 +187,16 @@ btnBuySellContainer.addEventListener('click', (evt) => {
     activateBuyOrSellBtn();
     map.closePopup();
     tableRender(contractors);
+    emulateChangeEvent();
   }
 });
 
 
-// Получаем с сервера данные пользователя
-getData(ROUTES.GET_USER_DATA, ERROR_TEXT.USER_DATA_ERROR)
-  .then((info) => {
-    user = info;
-    // activateFilterForm();
-    // activateFilter();
-    // renderPoints(offers);
-    console.log('user=');
-    console.log(user);
-  });
-// .catch(
-//   (err) => {
-//     showAlert(err);
-//     // blockSubmitButton();
-//     setTimeout(() => {
-//       // unblockSubmitButton();
-//       removeAlert();
-//     }, ALERT_SHOW_TIME);
-//   }
-// );
-
 setUserFormSubmit();
 
 export {
+  getDataOnStart,
+  emulateChangeEvent,
   commonIcon,
   starIcon,
   map,

@@ -155,7 +155,7 @@
                         <svg width="20" height="20" aria-hidden="true">
                             <use xlink:href="#icon-user"></use>
                         </svg>
-                        <span>
+                        <span id="user-profile-name">
                             <!-- Вставьте сюда имя пользователя -->
                         </span>
                     </span>
@@ -171,7 +171,7 @@
                 Для удобства обращения из JS, вы можете добавить контейнерам id
                 или уникальные классы
             -->
-            <div class="container" style="display: none">
+            <div class="container" id="load-error-container" style="display: none">
                 <div class="message">
                     <span class="message__icon">
                         <svg width="60" height="60" aria-hidden="true">
@@ -185,7 +185,7 @@
                 </div>
             </div>
 
-            <div class="container">
+            <div class="container" id="main-container">
                 <div class="users-nav">
                     <div class="users-nav__tabs">
                         <div class="tabs no-transition-global tabs--toggle-buy-sell" data-tabs="parent"
@@ -244,7 +244,7 @@
                 Справедливо только для отображения типа "Список". В случае с картой
                 просто показывается пустая карта
             -->
-            <div class="container container--lightbackground" style="display: none">
+            <div class="container container--lightbackground"  id="empty-data-container" style="display: none">
                 <div class="message message--noresults"><span class="message__icon">
                         <svg width="60" height="60" aria-hidden="true">
                             <use xlink:href="#icon-no-results"></use>
