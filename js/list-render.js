@@ -1,6 +1,7 @@
 import { getCheckedCheckBoxes } from './filter-master.js';
 import { isMapBtnActive } from './map-render.js';
 import { showEmptyAlert } from './utils.js';
+
 const sellButton = document.querySelector('#sell-btn');
 
 // Функция генерации HTML-кода для вывода списка платежных систем

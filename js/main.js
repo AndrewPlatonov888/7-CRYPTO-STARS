@@ -1,6 +1,5 @@
 import { renderPoints, hideMapShowList, showMapHideList, hideMap } from './map-render.js';
-// import { activateAdForm, activateFilterForm, deactivateAllForms } from './form-master.js';
-import { renderModalBuy, setUserFormSubmit } from './forms-master.js';
+import { renderModalForm, setUserFormSubmit } from './forms-master.js';
 import { tableRender, isSaleBtnActive } from './list-render.js';
 import { getData, ROUTES } from './network-utils.js';
 import { showLoadAlert, removeAlerts, showEmptyAlert } from './utils.js';
@@ -72,35 +71,6 @@ const starIcon = L.icon({
   iconSize: [40, 50],
 });
 
-
-// // Получаем с сервера данные контракторов
-// getData(ROUTES.GET_CONTRACTORS_DATA, ERROR_TEXT.CONTRACTORS_DATA_ERROR)
-//   .then((ads) => {
-//     removeAlerts();
-//     contractors = ads;
-//     activateFilter();
-//     tableRender(contractors);
-//     renderPoints(contractors);
-//   })
-//   .catch(
-//     () => {
-//       showLoadAlert();
-//     }
-//   );
-
-// // Получаем с сервера данные пользователя
-// getData(ROUTES.GET_USER_DATA, ERROR_TEXT.USER_DATA_ERROR)
-//   .then((info) => {
-//     removeAlerts();
-//     user = info;
-//   })
-//   .catch(
-//     () => {
-//       showLoadAlert();
-//     }
-//   );
-
-
 // Функция получения данных от сервера на старте
 function getDataOnStart() {
   // Получаем с сервера данные юзера
@@ -158,10 +128,10 @@ btnExchangeContainer.addEventListener('click', (evt) => {
       buyFormTrigger = false;
     } else {
       buyFormTrigger = true;
-      renderModalBuy(contractors, user, evt.target.id, buyFormTrigger);
+      renderModalForm(contractors, user, evt.target.id, buyFormTrigger);
       return;
     }
-    renderModalBuy(contractors, user, evt.target.id, buyFormTrigger);
+    renderModalForm(contractors, user, evt.target.id, buyFormTrigger);
   }
 });
 
@@ -169,7 +139,7 @@ btnExchangeContainer.addEventListener('click', (evt) => {
 btnMapExchangeContainer.addEventListener('click', (evt) => {
   if (evt.target.tagName === 'BUTTON') {
     buyFormTrigger = true;
-    renderModalBuy(contractors, user, evt.target.id, buyFormTrigger);
+    renderModalForm(contractors, user, evt.target.id, buyFormTrigger);
     map.closePopup();
   }
 });

@@ -1,20 +1,20 @@
-import { isEscapeKey, blockSubmitButton, unblockSubmitButton } from './utils.js';
+import { isEscapeKey } from './utils.js';
 import { hideMap, isMapBtnActive, mapContainer } from './map-render.js';
 import { sendData } from './network-utils.js';
 import { user } from './main.js';
 
-const ALERT_SHOW_TIME = 1000;
-// const PAYMENT_PASSWORD = '180712';
 const ERROR_CLASS = 'custom-input__error';
 const ERROR_COLOR = '#ed7358';
 const BASE_CURRENCY = '₽';
 
+//form
 const modalBuyContainer = document.querySelector('.modal--buy');
 const buyForm = document.querySelector('.modal-buy');
 const closeBuyFormBtn = document.querySelector('#close-buy-form');
 const buyFormContainer = document.querySelector('#buy-content');
+const submitBtn = document.querySelector('#buy-submit-btn');
 
-//FORM INPUTS
+//form inputs
 const inputType = document.querySelector('#type');
 const sellHeader = document.querySelector('#sell-header');
 const buyHeader = document.querySelector('#buy-header');
@@ -23,7 +23,6 @@ const receivingCurrencyMarker = document.querySelector('#recieving-currency');
 const initialReceivingCurrency = receivingCurrencyMarker.textContent;
 const sendingCurrencyMarker = document.querySelector('#sending-currency');
 const initialSendingCurrency = sendingCurrencyMarker.textContent;
-
 const inputSendingAmount = document.querySelector('#sendingAmount');
 const inputReceivingAmount = document.querySelector('#receivingAmount');
 const contractorId = document.querySelector('#contractorId');
@@ -39,21 +38,16 @@ const paymentPassword = document.querySelector('#payment-password');
 const exchangeAllBtn = document.querySelector('#exchange-all');
 const bankCardNumber = document.querySelector('#bankCardNumber');
 const initPlaceholderCardNumber = bankCardNumber.placeholder;
-const buyPwLabelParent = document.querySelector('#buy-payment-pw-label').parentElement;
-const buySelectParent = selectPaymentMethod.parentElement;
+const pwLabelParent = document.querySelector('#buy-payment-pw-label').parentElement;
+const selectParent = selectPaymentMethod.parentElement;
 const receivingLabel = document.querySelector('#receiving-label');
 
 // messages
-const buyMessageError = document.querySelector('#buy-message--error');
-const sellMessageError = document.querySelector('#sell-message--error');
-const buyMessageSuccess = document.querySelector('#buy-message--success');
-const sellMessageSuccess = document.querySelector('#sell-message--success');
-const buyInputErrorMessage = document.querySelector('#custom-input__error-buy');
+const messageError = document.querySelector('#buy-message--error');
+const messageSuccess = document.querySelector('#buy-message--success');
+const amountsErrorMessage = document.querySelector('#custom-input__error-buy');
 const pwErrorMessage = document.createElement('span');
 const selectErrorMessage = document.createElement('span');
-
-//submits
-const submitBtn = document.querySelector('#buy-submit-btn');
 
 let globalRate = 0;
 let isBuyFormActive;
@@ -66,26 +60,26 @@ const pristineBuy = new Pristine(buyForm);
 
 //Универсальная функция, показывающая ошибку формы КУПИТЬ/ПРОДАТЬ
 function showFormError() {
-  buyMessageError.style.cssText = 'display: flex';
-  sellMessageError.style.cssText = 'display: flex';
+  messageError.style.cssText = 'display: flex';
+  // sellMessageError.style.cssText = 'display: flex';
 }
 
 //Универсальная функция, убирающая ошибку формы КУПИТЬ/ПРОДАТЬ
 function hideFormError() {
-  buyMessageError.style.cssText = 'display: none';
-  sellMessageError.style.cssText = 'display: none';
+  messageError.style.cssText = 'display: none';
+  // sellMessageError.style.cssText = 'display: none';
 }
 
 // Универсальная функция, показывающая сообщение об успешной отправке формы КУПИТЬ/ПРОДАТЬ
 function showFormSuccess() {
-  buyMessageSuccess.style.cssText = 'display: flex';
-  sellMessageSuccess.style.cssText = 'display: flex';
+  messageSuccess.style.cssText = 'display: flex';
+  // sellMessageSuccess.style.cssText = 'display: flex';
 }
 
 // Универсальная функция, убирающая сообщение об успешной отправке формы КУПИТЬ/ПРОДАТЬ
 function hideFormSuccess() {
-  buyMessageSuccess.style.cssText = 'display: none';
-  sellMessageSuccess.style.cssText = 'display: none';
+  messageSuccess.style.cssText = 'display: none';
+  // sellMessageSuccess.style.cssText = 'display: none';
 }
 
 //Функции, связывающие поля SendingAmount / ReceivingAmount
@@ -104,7 +98,6 @@ function changeReceivingAmount() {
     inputReceivingAmount.value = (String((Number(inputSendingAmount.value) * globalRate)));
   }
 }
-
 
 //Универсальная функция закрытия формы покупки/продажи по нажатию Esc
 const onFormEscKeydown = (evt) => {
@@ -254,7 +247,7 @@ function removeFormListeners() {
 }
 
 // Универсальная функция отрисовки ФОРМЫ (BUY/SELL)
-function renderModalBuy(listOfContractors, userInfo, idMarker, isBuyFormSwitcherEnabled) {
+function renderModalForm(listOfContractors, userInfo, idMarker, isBuyFormSwitcherEnabled) {
   document.body.style.position = 'fixed'; // убираем скролл
   document.body.style.top = `-${window.scrollY}px`; // убираем скролл
   hideMap();
@@ -265,7 +258,7 @@ function renderModalBuy(listOfContractors, userInfo, idMarker, isBuyFormSwitcher
   isBuyFormActive = isBuyFormSwitcherEnabled;
   const space = String.fromCharCode(160);
   const maxAmount = userInfo.balances.filter((res) => res.currency === initialCurrency);
-  const contractor = listOfContractors.filter((res) => res.id === idMarker);
+  const contractor = listOfContractors.filter((res) => res.id === idMarker); // вытаскиваем из массива строку с кликнутым контрактором
   globalRate = Number(contractor[0].exchangeRate);
   modalBuyContainer.style.cssText = 'display: block';
   setFormListeners();
@@ -275,11 +268,7 @@ function renderModalBuy(listOfContractors, userInfo, idMarker, isBuyFormSwitcher
   if (!isBuyFormSwitcherEnabled) {
     limits.innerHTML = `${contractor[0].minAmount}${space}${BASE_CURRENCY}${space}${'-'}${space}${(maxAmount[0].amount * globalRate).toFixed(0)}${space}${BASE_CURRENCY}`;
   }
-  buyInputErrorMessage.innerHTML = '';
-  inputSendingAmount.min = contractor[0].minAmount;
-  inputSendingAmount.max = maxAmount[0].amount;
-  inputReceivingAmount.max = contractor[0].balance.amount;
-  inputReceivingAmount.min = contractor[0].minAmount / globalRate;
+  amountsErrorMessage.innerHTML = '';
   contractorId.value = contractor[0].id;
   exchangeRate.value = globalRate;
   sendingCurrency.value = initialCurrency;
@@ -305,15 +294,15 @@ function renderModalBuy(listOfContractors, userInfo, idMarker, isBuyFormSwitcher
     inputSendingAmount.max = maxAmount[0].amount;
     inputReceivingAmount.max = contractor[0].balance.amount;
     inputReceivingAmount.min = contractor[0].minAmount;
-    createEnrollmentExchangeAllBtn();
+    createEnrollmentExchangeAllBtn(); // Если продажа, то создаем доп. кнопку 'обменять все'
   }
   paymentPassword.value = '';
   pwErrorMessage.classList.add(ERROR_CLASS); //Создаем сообщение об ошибке для поля Платежный пароль
   pwErrorMessage.innerHTML = '';
-  buyPwLabelParent.appendChild(pwErrorMessage);
+  pwLabelParent.appendChild(pwErrorMessage);
   selectErrorMessage.style.cssText = `${'color: '}${ERROR_COLOR}${'; font-weight: 400'}`; //Создаем сообщение об ошибке для SELECT
   selectErrorMessage.innerHTML = '';
-  buySelectParent.appendChild(selectErrorMessage);
+  selectParent.appendChild(selectErrorMessage);
 }
 
 // === В А Л И Д А Ц И Я =============================================================================
@@ -323,26 +312,26 @@ function validateSendingAmount(field) {
   const keks = Number(field) / globalRate;
   if (Number(field) < Number(inputSendingAmount.min)) {
     showFormError();
-    buyInputErrorMessage.innerHTML = `${'Минимальная покупка от '}${inputSendingAmount.min}${' '}${sendingCurrency.value}`;
+    amountsErrorMessage.innerHTML = `${'Минимальная покупка от '}${inputSendingAmount.min}${' '}${sendingCurrency.value}`;
     return false;
   }
   if (Number(field) > Number(inputSendingAmount.max)) {
     showFormError();
-    buyInputErrorMessage.innerHTML = `${'Превышен лимит доступных средств: '}${inputSendingAmount.max}${' '}${sendingCurrency.value}`;
+    amountsErrorMessage.innerHTML = `${'Превышен лимит доступных средств: '}${inputSendingAmount.max}${' '}${sendingCurrency.value}`;
     return false;
   }
   if (keks > Number(inputReceivingAmount.max)) {
     showFormError();
-    buyInputErrorMessage.innerHTML = `${'У продавца доступно максимум '}${inputReceivingAmount.max}${' '}${receivingCurrency.value}`;
+    amountsErrorMessage.innerHTML = `${'У продавца доступно максимум '}${inputReceivingAmount.max}${' '}${receivingCurrency.value}`;
     return false;
   }
   if (Number(field) <= 0) {
     showFormError();
-    buyInputErrorMessage.innerHTML = `${'Размер оплаты должен быть больше 0 '}${sendingCurrency.value}`;
+    amountsErrorMessage.innerHTML = `${'Размер оплаты должен быть больше 0 '}${sendingCurrency.value}`;
     return false;
   }
   hideFormError();
-  buyInputErrorMessage.innerHTML = '';
+  amountsErrorMessage.innerHTML = '';
   return true;
 }
 
@@ -354,26 +343,26 @@ function validateReceivingAmount(field) {
   }
   if (Number(field) > Number(inputReceivingAmount.max)) {
     showFormError();
-    buyInputErrorMessage.innerHTML = `${'У продавца доступно максимум '}${inputReceivingAmount.max}${' '}${receivingCurrency.value}`;
+    amountsErrorMessage.innerHTML = `${'У продавца доступно максимум '}${inputReceivingAmount.max}${' '}${receivingCurrency.value}`;
     return false;
   }
   if (Number(field) < Number(inputReceivingAmount.min)) {
     showFormError();
-    buyInputErrorMessage.innerHTML = `${'Минимальное зачисление от '}${inputReceivingAmount.min}${' '}${receivingCurrency.value}`;
+    amountsErrorMessage.innerHTML = `${'Минимальное зачисление от '}${inputReceivingAmount.min}${' '}${receivingCurrency.value}`;
     return false;
   }
   if (rub > Number(inputSendingAmount.max)) {
     showFormError();
-    buyInputErrorMessage.innerHTML = `${'Превышен лимит доступных средств: '}${inputSendingAmount.max}${' '}${sendingCurrency.value}`;
+    amountsErrorMessage.innerHTML = `${'Превышен лимит доступных средств: '}${inputSendingAmount.max}${' '}${sendingCurrency.value}`;
     return false;
   }
   if (Number(field) <= 0) {
     showFormError();
-    buyInputErrorMessage.innerHTML = `${'Размер зачисления должен быть больше 0 '}${receivingCurrency.value}`;
+    amountsErrorMessage.innerHTML = `${'Размер зачисления должен быть больше 0 '}${receivingCurrency.value}`;
     return false;
   }
   hideFormError();
-  buyInputErrorMessage.innerHTML = '';
+  amountsErrorMessage.innerHTML = '';
   return true;
 }
 
@@ -419,6 +408,7 @@ pristineBuy.addValidator(
   validatePaymentPassword
 );
 
+// Подключаем Pristine SELECT с выбором метода платежа
 pristineBuy.addValidator(
   selectPaymentMethod,
   validateSelectPaymentMethods
@@ -428,22 +418,10 @@ pristineBuy.addValidator(
 const setUserFormSubmit = (onSuccess) => {
   buyForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    // let currentActiveForm;
-    const isValidBuy = pristineBuy.validate();
-    // if (isBuyFormActive) {
-    //   currentActiveForm = isValidBuy;
-    // }
-    if (isValidBuy) {
+    const isValidForm = pristineBuy.validate();
+    if (isValidForm) {
       sendData(new FormData(evt.target))
-        .then(onSuccess)
-        .catch(
-          () => {
-            blockSubmitButton();
-            setTimeout(() => {
-              unblockSubmitButton();
-            }, ALERT_SHOW_TIME);
-          }
-        );
+        .then(onSuccess);
     }
     else {
       showFormError();
@@ -452,15 +430,13 @@ const setUserFormSubmit = (onSuccess) => {
 };
 
 export {
-  renderModalBuy,
+  renderModalForm,
   onFormEscKeydown,
   setUserFormSubmit,
-  buyMessageSuccess,
-  sellMessageSuccess,
+  messageSuccess,
   deactivateAllForms,
   showFormError,
   hideFormError,
   showFormSuccess,
   isBuyFormActive,
-  // isSellFormActive
 };
